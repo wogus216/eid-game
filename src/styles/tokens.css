@@ -1,0 +1,9 @@
+:root {
+  --bg: #0a1428;
+  --bg-deep: #050a18;
+  --glow: #4db8ff;
+  --glow-soft: rgba(77, 184, 255, 0.35);
+  --text: #f4f8ff;
+  --fail: #ff6b81;
+  --gold: #ffd166;
+}
