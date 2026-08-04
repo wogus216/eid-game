@@ -4,7 +4,11 @@ const KEY = 'eid-decibel-game-v1'
 const SCENES = ['standby', 'decibel', 'roulette', 'result']
 
 export function save(state: ShowState): void {
-  localStorage.setItem(KEY, JSON.stringify(state))
+  try {
+    localStorage.setItem(KEY, JSON.stringify(state))
+  } catch {
+    // localStorage 사용 불가(사파리 프라이빗 모드, 용량 초과 등) 시 무시
+  }
 }
 
 export function load(): ShowState | null {

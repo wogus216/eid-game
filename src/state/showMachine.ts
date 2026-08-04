@@ -60,6 +60,7 @@ export function reduce(
           if (state.winners.length >= CONFIG.winnerCount) {
             return { ...state, scene: 'result', step: 0 }
           }
+          if (state.drawnHistory.length >= state.entryCount) return state
           const n = drawOne(state.entryCount, new Set(state.drawnHistory), randInt)
           return { ...state, winners: [...state.winners, n], drawnHistory: [...state.drawnHistory, n] }
         }
@@ -79,6 +80,7 @@ export function reduce(
 
     case 'REDRAW_LAST': {
       if (state.scene !== 'roulette' || state.winners.length === 0) return state
+      if (state.drawnHistory.length >= state.entryCount) return state
       const winners = state.winners.slice(0, -1)
       const n = drawOne(state.entryCount, new Set(state.drawnHistory), randInt)
       return { ...state, winners: [...winners, n], drawnHistory: [...state.drawnHistory, n] }

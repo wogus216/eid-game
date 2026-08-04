@@ -58,6 +58,7 @@ export function App() {
             clear()
             dispatch({ type: 'RESET' })
             setEscHolding(false)
+            busyRef.current = false
           }, CONFIG.escHoldMs)
           break
       }

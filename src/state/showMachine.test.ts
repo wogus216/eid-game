@@ -80,6 +80,33 @@ describe('roulette', () => {
     expect(s.winners.length).toBe(0)
     expect(s.scene).toBe('roulette')
   })
+
+  it('REDRAW_LAST is a no-op once the draw pool is exhausted after all winners are drawn', () => {
+    let s = initialState
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount) })
+    expect(s.entryCount).toBe(CONFIG.winnerCount)
+    while (s.scene !== 'roulette') s = reduce(s, { type: 'NEXT' }, seq(0))
+    for (let i = 0; i < CONFIG.winnerCount; i++) s = reduce(s, { type: 'NEXT' }, seq(0))
+    expect(s.winners.length).toBe(CONFIG.winnerCount)
+    expect(s.drawnHistory.length).toBe(s.entryCount)
+    const before = s
+    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0))
+    expect(s).toEqual(before)
+  })
+
+  it('NEXT is a no-op once the draw pool is exhausted via redraws', () => {
+    let s = initialState
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount) })
+    while (s.scene !== 'roulette') s = reduce(s, { type: 'NEXT' }, seq(0))
+    for (let i = 0; i < CONFIG.winnerCount - 1; i++) s = reduce(s, { type: 'NEXT' }, seq(0))
+    expect(s.winners.length).toBe(CONFIG.winnerCount - 1)
+    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0)) // consumes the last remaining number in the pool
+    expect(s.drawnHistory.length).toBe(s.entryCount)
+    expect(s.winners.length).toBe(CONFIG.winnerCount - 1)
+    const before = s
+    s = reduce(s, { type: 'NEXT' }, seq(0)) // would draw the final winner but the pool is exhausted
+    expect(s).toEqual(before)
+  })
 })
 
 describe('BACK', () => {
