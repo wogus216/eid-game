@@ -17,7 +17,13 @@ function Gauge({ db, target, burst = false }: { db: number; target: number; burs
           {target}dB
         </div>
       </div>
-      {burst && <div className="gauge-burst" aria-hidden />}
+      {burst && (
+        <div className="gauge-burst" aria-hidden>
+          {Array.from({ length: 10 }, (_, i) => (
+            <span key={i} className="spark" />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

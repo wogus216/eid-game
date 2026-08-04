@@ -88,11 +88,10 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         </div>
         <Mascot size={180} />
       </div>
-      {spinning && (
-        <div className={`chant ${almost ? 'almost' : ''}`}>
-          {almost ? CONFIG.copy.rouletteAlmost : CONFIG.copy.rouletteChant}
-        </div>
-      )}
+      {/* 구호 슬롯은 항상 렌더링해 레이아웃 점프를 막는다 */}
+      <div className={`chant ${spinning ? '' : 'hidden'} ${almost ? 'almost' : ''}`}>
+        {almost ? CONFIG.copy.rouletteAlmost : CONFIG.copy.rouletteChant}
+      </div>
     </div>
   )
 }
