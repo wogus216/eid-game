@@ -5,6 +5,7 @@ import { CONFIG } from '../data/config'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
 import { RouletteScene } from './scenes/RouletteScene'
+import { ResultScene } from './scenes/ResultScene'
 import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/stage.css'
@@ -85,7 +86,7 @@ export function App() {
     standby: <StandbyScene state={state} setBusy={setBusy} />,
     decibel: <DecibelScene state={state} setBusy={setBusy} />,
     roulette: <RouletteScene state={state} setBusy={setBusy} />,
-    result: <div className="scene">RESULT (Task 8)</div>,
+    result: <ResultScene state={state} setBusy={setBusy} />,
   }
 
   return (
