@@ -335,22 +335,104 @@
   box-shadow: none;
 }
 
-/* 결과 — 크림 카드 */
+/* 결과 — 피날레 */
+.rays {
+  position: fixed;
+  left: 50%;
+  top: 42%;
+  width: 160vmax;
+  height: 160vmax;
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(
+    rgba(242, 178, 60, 0.16) 0deg 9deg,
+    transparent 9deg 22deg
+  );
+  -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  animation: rays-spin 36s linear infinite;
+  pointer-events: none;
+}
+@keyframes rays-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.firework {
+  position: fixed;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  border-radius: 50%;
+  border: 7px dotted currentColor;
+  opacity: 0;
+  animation: firework-pop 2.8s ease-out infinite;
+  pointer-events: none;
+}
+@keyframes firework-pop {
+  0% { transform: scale(0.1); opacity: 0; }
+  8% { opacity: 1; }
+  38% { transform: scale(1.25); opacity: 0; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+.result-title { animation: title-cheer 1.1s ease-in-out infinite; }
+@keyframes title-cheer {
+  0%, 100% { transform: rotate(-1.2deg) scale(1); }
+  50% { transform: rotate(1.2deg) scale(1.04); }
+}
 .result-numbers { display: flex; gap: 2.5rem; }
 .result-card {
+  position: relative;
+  overflow: hidden;
   width: 220px;
   height: 260px;
   border-radius: 28px;
   background: var(--cream);
-  border: 6px solid var(--wood);
-  outline: 3px solid var(--wood-deep);
-  box-shadow: 0 14px 0 rgba(90, 70, 52, 0.14), 0 22px 40px rgba(90, 70, 52, 0.2);
+  border: 6px solid var(--gold);
+  outline: 3px solid var(--wood);
+  box-shadow: 0 14px 0 rgba(90, 70, 52, 0.14), 0 0 44px rgba(242, 178, 60, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 6rem;
   font-weight: 900;
   color: var(--tulip);
+  animation: card-in 0.7s cubic-bezier(0.2, 1.5, 0.4, 1) both;
+  animation-delay: calc(var(--i, 0) * 0.22s);
+}
+@keyframes card-in {
+  0% { transform: translateY(60px) scale(0.4) rotate(-8deg); opacity: 0; }
+  100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; }
+}
+.result-card::before {
+  /* 카드 상단 금메달 */
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffe08a, var(--gold) 70%);
+  box-shadow: 0 3px 0 rgba(90, 70, 52, 0.18), inset 0 0 0 4px rgba(255, 255, 255, 0.5);
+}
+.result-card::after {
+  /* 반짝이 스윕 */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.65) 48%,
+    rgba(255, 255, 255, 0.65) 52%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  animation: card-shine 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.4s + 0.9s);
+}
+@keyframes card-shine {
+  0% { transform: translateX(-120%); }
+  45%, 100% { transform: translateX(120%); }
 }
 .result-card-label { font-size: 2rem; color: var(--choco); align-self: flex-end; margin: 0 0 3.2rem 0.4rem; }
 
@@ -368,5 +450,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mascot, .mascot.cheer, .petal { animation: none; }
+  .mascot, .mascot.cheer, .petal, .rays, .firework,
+  .result-title, .result-card::after, .chant { animation: none; }
 }
