@@ -3,6 +3,7 @@ import { reduce, initialState, type ShowState, type ShowAction } from '../state/
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { StandbyScene } from './scenes/StandbyScene'
+import { DecibelScene } from './scenes/DecibelScene'
 import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/stage.css'
@@ -81,7 +82,7 @@ export function App() {
 
   const scenes: Record<ShowState['scene'], ReactNode> = {
     standby: <StandbyScene state={state} setBusy={setBusy} />,
-    decibel: <div className="scene">DECIBEL (Task 6)</div>,
+    decibel: <DecibelScene state={state} setBusy={setBusy} />,
     roulette: <div className="scene">ROULETTE (Task 7)</div>,
     result: <div className="scene">RESULT (Task 8)</div>,
   }

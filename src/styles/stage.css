@@ -27,3 +27,37 @@
   font-weight: 800;
   text-shadow: 0 0 30px var(--glow-soft);
 }
+.gauge {
+  position: relative;
+  width: 120px;
+  height: 55vh;
+  border: 3px solid var(--glow-soft);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+.gauge-fill {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to top, #1a6fb0, var(--glow));
+  box-shadow: 0 0 30px var(--glow-soft);
+}
+.gauge-target {
+  position: absolute;
+  width: 100%;
+  border-top: 4px dashed var(--gold);
+  color: var(--gold);
+  font-weight: 700;
+  padding-top: 2px;
+  text-align: right;
+}
+.decibel-row { display: flex; align-items: center; gap: 4rem; }
+.db-readout { font-size: 9rem; font-weight: 900; min-width: 5ch; text-align: center; }
+.db-readout.success { color: var(--gold); text-shadow: 0 0 40px var(--gold); }
+.db-unit { font-size: 3rem; opacity: 0.7; }
+.mascot.cheer { animation: cheer 0.5s ease-in-out infinite; }
+@keyframes cheer {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-24px) rotate(4deg); }
+}
