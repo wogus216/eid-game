@@ -21,8 +21,23 @@ describe('standby', () => {
     expect(s.entryCount).toBe(CONFIG.maxEntry)
   })
 
+  it('clamps entryCount to at least CONFIG.winnerCount', () => {
+    let s = initialState
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount + 1) })
+    expect(s.entryCount).toBe(CONFIG.winnerCount)
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -1 })
+    expect(s.entryCount).toBe(CONFIG.winnerCount) // doesn't go below
+  })
+
   it('NEXT moves to decibel', () => {
     expect(reduce(initialState, { type: 'NEXT' }).scene).toBe('decibel')
+  })
+
+  it('ADJUST_ENTRY outside standby is a no-op', () => {
+    let s = reduce(initialState, { type: 'NEXT' }) // move to decibel
+    const before = s.entryCount
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -50 })
+    expect(s.entryCount).toBe(before)
   })
 })
 
@@ -58,6 +73,13 @@ describe('roulette', () => {
     expect(s.winners[0]).not.toBe(first)      // 밀려난 번호 다시 안 나옴
     expect(s.drawnHistory).toContain(first)   // history에는 남음
   })
+
+  it('REDRAW_LAST with empty winners is a no-op', () => {
+    let s = advanceTo('roulette')
+    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0))
+    expect(s.winners.length).toBe(0)
+    expect(s.scene).toBe('roulette')
+  })
 })
 
 describe('BACK', () => {
@@ -69,5 +91,22 @@ describe('BACK', () => {
     expect(s.scene).toBe('decibel')
     expect(s.step).toBe(DECIBEL_LAST_STEP)
     expect(s.winners).toEqual(winners)
+  })
+
+  it('BACK at standby step 0 is a no-op', () => {
+    const s = reduce(initialState, { type: 'BACK' })
+    expect(s.scene).toBe('standby')
+    expect(s.step).toBe(0)
+  })
+})
+
+describe('result', () => {
+  it('NEXT in result is a no-op', () => {
+    let s = advanceTo('result')
+    const before = s
+    s = reduce(s, { type: 'NEXT' })
+    expect(s.scene).toBe('result')
+    expect(s.step).toBe(0)
+    expect(s).toEqual(before)
   })
 })

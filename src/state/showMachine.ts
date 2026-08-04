@@ -45,7 +45,7 @@ export function reduce(
 
     case 'ADJUST_ENTRY': {
       if (state.scene !== 'standby') return state
-      const entryCount = Math.min(CONFIG.maxEntry, Math.max(1, state.entryCount + action.delta))
+      const entryCount = Math.min(CONFIG.maxEntry, Math.max(CONFIG.winnerCount, state.entryCount + action.delta))
       return { ...state, entryCount }
     }
 
