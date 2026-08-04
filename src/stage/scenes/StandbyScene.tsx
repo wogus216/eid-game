@@ -7,7 +7,7 @@ export function StandbyScene({ state }: SceneProps) {
     <div className="scene">
       <Mascot size={280} />
       <h1 className="scene-title">{CONFIG.copy.standbyTitle}</h1>
-      <div className="entry-count">입장 {state.entryCount}명</div>
+      <div className="entry-count">{CONFIG.copy.entryCountLabel(state.entryCount)}</div>
     </div>
   )
 }

@@ -46,8 +46,8 @@ export function App() {
           break
         case 'f':
         case 'F':
-          if (document.fullscreenElement) void document.exitFullscreen()
-          else void document.documentElement.requestFullscreen()
+          if (document.fullscreenElement) void document.exitFullscreen().catch(() => {})
+          else void document.documentElement.requestFullscreen().catch(() => {})
           break
         case 'Escape':
           setEscHolding(true)
@@ -69,6 +69,7 @@ export function App() {
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
     return () => {
+      if (escTimer.current) clearTimeout(escTimer.current)
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
     }
@@ -88,7 +89,7 @@ export function App() {
   return (
     <>
       {scenes[state.scene]}
-      {escHolding && <div className="reset-overlay">초기화하려면 Esc를 계속 누르세요…</div>}
+      {escHolding && <div className="reset-overlay">{CONFIG.copy.escHoldHint}</div>}
     </>
   )
 }

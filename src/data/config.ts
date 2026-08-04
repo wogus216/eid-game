@@ -22,6 +22,8 @@ export const CONFIG = {
     joinEmpty: '이름을 알려줘!',
     joinSuccess: (name: string) => `${name}님, 로그인 완료!`,
     joinWelcome: '발표회에 온 걸 환영해!',
+    escHoldHint: '초기화하려면 Esc를 계속 누르세요…',
+    entryCountLabel: (n: number) => `입장 ${n}명`,
   },
 } as const
 
