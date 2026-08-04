@@ -4,6 +4,7 @@ import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
+import { RouletteScene } from './scenes/RouletteScene'
 import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/stage.css'
@@ -83,7 +84,7 @@ export function App() {
   const scenes: Record<ShowState['scene'], ReactNode> = {
     standby: <StandbyScene state={state} setBusy={setBusy} />,
     decibel: <DecibelScene state={state} setBusy={setBusy} />,
-    roulette: <div className="scene">ROULETTE (Task 7)</div>,
+    roulette: <RouletteScene state={state} setBusy={setBusy} />,
     result: <div className="scene">RESULT (Task 8)</div>,
   }
 
