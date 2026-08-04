@@ -286,8 +286,11 @@
 .wheel-flick { color: var(--choco); opacity: 0.85; font-variant-numeric: tabular-nums; }
 .wheel-flick.almost { color: var(--tulip); opacity: 1; }
 
-/* 스핀 중 구호 */
+/* 스핀 중 구호 — 화면 하단 고정(레이아웃 흐름 밖)이라 돌림판 위치에 영향 없음 */
 .chant {
+  position: fixed;
+  bottom: 6vh;
+  left: 50%;
   font-size: 2.2rem;
   font-weight: 900;
   color: var(--choco);
@@ -297,6 +300,7 @@
   padding: 0.7rem 2rem;
   box-shadow: 0 7px 0 rgba(90, 70, 52, 0.12);
   animation: chant-bounce 0.55s ease-in-out infinite;
+  z-index: 5;
 }
 .chant.almost {
   color: #fff;
@@ -309,8 +313,8 @@
   animation: none;
 }
 @keyframes chant-bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.07) rotate(-1deg); }
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.07) rotate(-1deg); }
 }
 .winner-list { display: flex; flex-direction: column; gap: 1rem; }
 .winner-chip {
