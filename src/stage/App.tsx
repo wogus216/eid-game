@@ -79,12 +79,22 @@ export function App() {
         setEscHolding(false)
       }
     }
+    // 모바일 테스트용: 터치 탭 = Enter (마우스 클릭에는 반응하지 않음)
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'touch') return
+      const now = performance.now()
+      if (now - lastActionAt.current < 300) return
+      lastActionAt.current = now
+      if (!busyRef.current) dispatch({ type: 'NEXT' })
+    }
     window.addEventListener('keydown', onKeyDown)
     window.addEventListener('keyup', onKeyUp)
+    window.addEventListener('pointerdown', onPointerDown)
     return () => {
       if (escTimer.current) clearTimeout(escTimer.current)
       window.removeEventListener('keydown', onKeyDown)
       window.removeEventListener('keyup', onKeyUp)
+      window.removeEventListener('pointerdown', onPointerDown)
     }
   }, [])
 
