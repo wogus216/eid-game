@@ -1,10 +1,9 @@
 export function Mascot({ size, className = '' }: { size: number; className?: string }) {
   return (
     <img
-      src={`${import.meta.env.BASE_URL}mascot.svg`}
+      src={`${import.meta.env.BASE_URL}mascot.png`}
       alt=""
-      width={size}
-      height={size}
+      style={{ width: size, height: 'auto' }}
       className={`mascot ${className}`}
       draggable={false}
     />

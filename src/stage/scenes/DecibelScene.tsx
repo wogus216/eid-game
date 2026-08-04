@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
+import { Confetti } from '../../components/Confetti'
 import { useDecibelAnim } from '../useDecibelAnim'
 import type { SceneProps } from '../App'
 
-function Gauge({ db, target }: { db: number; target: number }) {
+function Gauge({ db, target, burst = false }: { db: number; target: number; burst?: boolean }) {
   const max = 110
   const pct = Math.min(100, (db / max) * 100)
   const targetPct = (target / max) * 100
   return (
-    <div className="gauge">
-      <div className="gauge-fill" style={{ height: `${pct}%` }} />
-      <div className="gauge-target" style={{ bottom: `${targetPct}%` }}>
-        {target}dB
+    <div className="gauge-wrap">
+      <div className="gauge">
+        <div className="gauge-fill" style={{ height: `${pct}%` }} />
+        <div className="gauge-target" style={{ bottom: `${targetPct}%` }}>
+          {target}dB
+        </div>
       </div>
+      {burst && <div className="gauge-burst" aria-hidden />}
     </div>
   )
 }
@@ -30,8 +34,10 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
     setBusy(false)
   })
   const isLastChance = index === CONFIG.attempts.length - 1
+  const breakthrough = finished && spec.success
   return (
-    <div className="scene decibel">
+    <div className={`scene decibel ${breakthrough ? 'breakthrough' : ''}`}>
+      {breakthrough && <Confetti count={80} />}
       <h1 className="scene-title">
         {finished
           ? spec.success
@@ -42,12 +48,12 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
             : CONFIG.copy.decibelTitle}
       </h1>
       <div className="decibel-row">
-        <Gauge db={db} target={CONFIG.targetDb} />
-        <div className={`db-readout ${finished && spec.success ? 'success' : ''}`}>
+        <Gauge db={db} target={CONFIG.targetDb} burst={breakthrough} />
+        <div className={`db-readout ${breakthrough ? 'success' : ''}`}>
           {Math.round(db)}
           <span className="db-unit">dB</span>
         </div>
-        <Mascot size={220} className={finished && spec.success ? 'cheer' : ''} />
+        <Mascot size={220} className={breakthrough ? 'cheer' : ''} />
       </div>
     </div>
   )

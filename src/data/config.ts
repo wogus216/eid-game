@@ -16,6 +16,8 @@ export const CONFIG = {
     decibelLastChance: '마지막 기회!',
     decibelSuccess: '목표 돌파!!',
     rouletteTitle: '돌려 돌려 돌림판',
+    rouletteChant: '돌려 돌려 돌림판!',
+    rouletteAlmost: '나와라 나와라…!',
     resultTitle: '축하합니다!',
     joinTitle: '이름으로 로그인',
     joinPlaceholder: '이름을 입력해 줘',

@@ -9,28 +9,45 @@ body { overflow: auto; user-select: auto; }
   padding: 2rem;
   text-align: center;
 }
-.join-title { font-size: 1.9rem; font-weight: 800; text-shadow: 0 0 24px var(--glow-soft); }
-.join-sub { font-size: 1.2rem; opacity: 0.8; }
+.join-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--choco);
+  background: var(--cream);
+  border: 3px solid #fff;
+  border-radius: 999px;
+  padding: 0.7rem 1.6rem;
+  box-shadow: 0 6px 0 rgba(90, 70, 52, 0.12);
+}
+.join-sub { font-size: 1.2rem; font-weight: 600; color: var(--choco); opacity: 0.85; }
 .join form { display: flex; flex-direction: column; gap: 1rem; width: min(320px, 80vw); }
 .join input {
   font-size: 1.4rem;
   padding: 0.9rem 1.2rem;
-  border-radius: 14px;
-  border: 2px solid var(--glow-soft);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
+  border-radius: 16px;
+  border: 3px solid var(--cream-deep);
+  background: #fff;
+  color: var(--choco);
   text-align: center;
   outline: none;
 }
-.join input:focus { border-color: var(--glow); box-shadow: 0 0 20px var(--glow-soft); }
+.join input:focus {
+  border-color: var(--grass);
+  box-shadow: 0 0 0 4px rgba(142, 209, 99, 0.3);
+}
 .join button {
   font-size: 1.3rem;
   font-weight: 800;
   padding: 0.9rem;
-  border-radius: 14px;
+  border-radius: 16px;
   border: none;
-  background: var(--glow);
-  color: var(--bg-deep);
+  background: var(--grass-deep);
+  color: #fff;
+  box-shadow: 0 5px 0 #57a03c;
+}
+.join button:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 #57a03c;
 }
 .shake { animation: shake 0.4s; }
 @keyframes shake {
@@ -43,8 +60,12 @@ body { overflow: auto; user-select: auto; }
   0% { transform: scale(0.6); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+.mascot { filter: drop-shadow(0 10px 14px rgba(60, 90, 60, 0.3)); }
 .mascot.cheer { animation: cheer 0.5s ease-in-out infinite; }
 @keyframes cheer {
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50% { transform: translateY(-24px) rotate(4deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot.cheer { animation: none; }
 }

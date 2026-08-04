@@ -22,6 +22,7 @@ export function App() {
     () => load() ?? initialState,
   )
   const busyRef = useRef(false)
+  const lastActionAt = useRef(0)
   const escTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [escHolding, setEscHolding] = useState(false)
 
@@ -30,12 +31,20 @@ export function App() {
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
+      // busy 플래그는 렌더 이후에 세워지므로, 같은 프레임/연타로 들어온
+      // 진행 키는 시간 기반으로 한 번 더 걸러준다
+      const throttled = () => {
+        const now = performance.now()
+        if (now - lastActionAt.current < 300) return true
+        lastActionAt.current = now
+        return false
+      }
       switch (e.key) {
         case 'Enter':
-          if (!busyRef.current) dispatch({ type: 'NEXT' })
+          if (!busyRef.current && !throttled()) dispatch({ type: 'NEXT' })
           break
         case 'ArrowLeft':
-          if (!busyRef.current) dispatch({ type: 'BACK' })
+          if (!busyRef.current && !throttled()) dispatch({ type: 'BACK' })
           break
         case 'ArrowUp':
           dispatch({ type: 'ADJUST_ENTRY', delta: +1 })
@@ -45,7 +54,7 @@ export function App() {
           break
         case 'r':
         case 'R':
-          if (!busyRef.current) dispatch({ type: 'REDRAW_LAST' })
+          if (!busyRef.current && !throttled()) dispatch({ type: 'REDRAW_LAST' })
           break
         case 'f':
         case 'F':
@@ -92,8 +101,25 @@ export function App() {
 
   return (
     <>
+      <div className="petals" aria-hidden>
+        {Array.from({ length: 10 }, (_, i) => (
+          <span
+            key={i}
+            className="petal"
+            style={{
+              left: `${(i * 97) % 100}%`,
+              animationDelay: `${(i % 10) * 1.6}s`,
+              animationDuration: `${9 + (i % 5) * 2.2}s`,
+            }}
+          />
+        ))}
+      </div>
       {scenes[state.scene]}
-      {escHolding && <div className="reset-overlay">{CONFIG.copy.escHoldHint}</div>}
+      {escHolding && (
+        <div className="reset-overlay">
+          <span>{CONFIG.copy.escHoldHint}</span>
+        </div>
+      )}
     </>
   )
 }

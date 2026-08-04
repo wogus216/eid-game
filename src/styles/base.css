@@ -1,11 +1,50 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body, #root { height: 100%; }
 body {
-  background: radial-gradient(circle at 50% 30%, var(--bg) 0%, var(--bg-deep) 100%);
-  color: var(--text);
+  background: linear-gradient(var(--sky-high) 0%, #aee4f8 55%, var(--sky) 100%);
+  color: var(--choco);
   font-family: "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
   overflow: hidden;
   user-select: none;
+}
+/* 잔디 언덕 — 동물의 숲 삼각형 잔디 패턴 */
+body::before {
+  content: '';
+  position: fixed;
+  left: -12vw;
+  right: -12vw;
+  bottom: -6vh;
+  height: 46vh;
+  border-radius: 55% 45% 0 0 / 100% 85% 0 0;
+  background-color: var(--grass);
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.06)),
+    conic-gradient(from 140deg at 50% 62%, var(--grass-deep) 0 52deg, transparent 52deg);
+  background-size: 100% 100%, 52px 52px;
+  border-top: 10px solid #a3e07c;
+  z-index: -1;
+}
+/* 구름 */
+body::after {
+  content: '';
+  position: fixed;
+  top: 9vh;
+  left: 6vw;
+  width: 150px;
+  height: 46px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow:
+    46px -20px 0 10px rgba(255, 255, 255, 0.92),
+    96px 2px 0 2px rgba(255, 255, 255, 0.92),
+    52vw -4vh 0 8px rgba(255, 255, 255, 0.8),
+    56vw -1vh 0 14px rgba(255, 255, 255, 0.8),
+    78vw 9vh 0 4px rgba(255, 255, 255, 0.7);
+  animation: clouds-drift 26s ease-in-out infinite alternate;
+  z-index: -1;
+}
+@keyframes clouds-drift {
+  to { transform: translateX(6vw); }
 }
 .scene {
   height: 100%;
@@ -14,4 +53,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 2rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
 }

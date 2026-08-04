@@ -1,9 +1,23 @@
 :root {
-  --bg: #0a1428;
-  --bg-deep: #050a18;
-  --glow: #4db8ff;
-  --glow-soft: rgba(77, 184, 255, 0.35);
-  --text: #f4f8ff;
-  --fail: #ff6b81;
-  --gold: #ffd166;
+  /* 동물의 숲 파스텔 팔레트 */
+  --sky: #96d8f1;
+  --sky-high: #d3f1fc;
+  --grass: #8ed163;
+  --grass-deep: #6cb84b;
+  --cream: #fff6dd;
+  --cream-deep: #f3e2ba;
+  --wood: #b07c4c;
+  --wood-deep: #8a5a33;
+  --choco: #5a4634;
+  --blossom: #ffc9d9;
+  --blossom-deep: #f39ab7;
+  --tulip: #ff8560;
+  --gold: #f2b23c;
+  --fail: #e2574c;
+  /* 이전 변수 별칭 (기존 사용처 호환) */
+  --bg: var(--sky);
+  --bg-deep: var(--grass-deep);
+  --glow: #57b8ff;
+  --glow-soft: rgba(87, 184, 255, 0.35);
+  --text: var(--choco);
 }

@@ -3,11 +3,14 @@ import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
 import type { SceneProps } from '../App'
 
-const SPIN_MS = 2500
+const SPIN_MS = 3800
+const ALMOST_MS = 1400 // 멈추기 전 "나와라 나와라…!" 구간
 
 export function RouletteScene({ state, setBusy }: SceneProps) {
-  const { winners } = state
+  const { winners, entryCount } = state
   const [spinning, setSpinning] = useState(false)
+  const [almost, setAlmost] = useState(false)
+  const [flick, setFlick] = useState<number | null>(null) // 스핀 중 스쳐가는 번호
   const [revealed, setRevealed] = useState(winners.length) // 새로고침 복구 시 전부 공개 상태
   const lastSeen = useRef(winners.join(','))
 
@@ -16,16 +19,39 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
     if (key !== lastSeen.current && winners.length > 0) {
       lastSeen.current = key
       setSpinning(true)
+      setAlmost(false)
       setRevealed(winners.length - 1)
       setBusy(true)
-      const t = setTimeout(() => {
+
+      // 번호 플리커: 빠르게 돌다가 점점 느려지며 애간장
+      let delay = 55
+      let elapsed = 0
+      let tickTimer: ReturnType<typeof setTimeout> | null = null
+      const tick = () => {
+        setFlick(1 + Math.floor(Math.random() * entryCount))
+        elapsed += delay
+        if (elapsed > SPIN_MS * 0.5) delay = Math.min(delay * 1.3, 430)
+        if (elapsed < SPIN_MS - 120) tickTimer = setTimeout(tick, delay)
+      }
+      tick()
+
+      const almostTimer = setTimeout(() => setAlmost(true), SPIN_MS - ALMOST_MS)
+      const doneTimer = setTimeout(() => {
         setSpinning(false)
+        setAlmost(false)
+        setFlick(null)
         setRevealed(winners.length)
         setBusy(false)
       }, SPIN_MS)
-      return () => clearTimeout(t)
+
+      return () => {
+        if (tickTimer) clearTimeout(tickTimer)
+        clearTimeout(almostTimer)
+        clearTimeout(doneTimer)
+        setBusy(false)
+      }
     }
-  }, [winners, setBusy])
+  }, [winners, entryCount, setBusy])
 
   const current = winners[winners.length - 1]
   const showCard = winners.length > 0 && revealed >= winners.length
@@ -34,12 +60,18 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
     <div className="scene">
       <h1 className="scene-title">{CONFIG.copy.rouletteTitle}</h1>
       <div className="roulette-row">
-        <div className={`wheel ${spinning ? 'spinning' : ''}`}>
+        <div className={`wheel ${spinning ? 'spinning' : ''} ${almost ? 'almost' : ''}`}>
           {Array.from({ length: 12 }, (_, i) => (
             <div key={i} className="wheel-spoke" style={{ transform: `rotate(${i * 30}deg)` }} />
           ))}
           <div className="wheel-center">
-            {showCard ? <span className="wheel-number">{current}</span> : '?'}
+            {spinning ? (
+              <span className={`wheel-flick ${almost ? 'almost' : ''}`}>{flick ?? '?'}</span>
+            ) : showCard ? (
+              <span className="wheel-number">{current}</span>
+            ) : (
+              '?'
+            )}
           </div>
         </div>
         <div className="winner-list">
@@ -56,6 +88,11 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         </div>
         <Mascot size={180} />
       </div>
+      {spinning && (
+        <div className={`chant ${almost ? 'almost' : ''}`}>
+          {almost ? CONFIG.copy.rouletteAlmost : CONFIG.copy.rouletteChant}
+        </div>
+      )}
     </div>
   )
 }
