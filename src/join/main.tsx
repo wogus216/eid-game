@@ -1,3 +1,4 @@
 import { createRoot } from 'react-dom/client'
+import { JoinApp } from './JoinApp'
 
-createRoot(document.getElementById('root')!).render(<h1>JOIN</h1>)
+createRoot(document.getElementById('root')!).render(<JoinApp />)
