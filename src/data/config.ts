@@ -27,6 +27,14 @@ export const CONFIG = {
     joinButton: '로그인',
     escHoldHint: '초기화하려면 Esc를 계속 누르세요…',
     entryCountLabel: (n: number) => `입장 ${n}명`,
+    cuePrefix: 'Enter ▶',
+    cue: {
+      standby: '데시벨 게임 시작',
+      attempt: (n: number) => `${n}차 시도`,
+      toRoulette: '돌림판으로',
+      draw: (n: number) => `${n}번째 추첨`,
+      toResult: '결과 발표',
+    },
   },
 } as const
 

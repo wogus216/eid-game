@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
-import { reduce, initialState, type ShowState, type ShowAction } from '../state/showMachine'
+import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState, type ShowAction } from '../state/showMachine'
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { StandbyScene } from './scenes/StandbyScene'
@@ -13,6 +13,24 @@ import '../styles/stage.css'
 export interface SceneProps {
   state: ShowState
   setBusy: (busy: boolean) => void
+}
+
+// 운영자 큐: 지금 Enter를 누르면 무엇이 일어나는지
+function nextCue(s: ShowState): string | null {
+  switch (s.scene) {
+    case 'standby':
+      return CONFIG.copy.cue.standby
+    case 'decibel':
+      return s.step < DECIBEL_LAST_STEP
+        ? CONFIG.copy.cue.attempt(s.step + 1)
+        : CONFIG.copy.cue.toRoulette
+    case 'roulette':
+      return s.winners.length < CONFIG.winnerCount
+        ? CONFIG.copy.cue.draw(s.winners.length + 1)
+        : CONFIG.copy.cue.toResult
+    case 'result':
+      return null
+  }
 }
 
 export function App() {
@@ -98,9 +116,13 @@ export function App() {
     }
   }, [])
 
+  const [busyUi, setBusyUi] = useState(false)
   const setBusy = useCallback((busy: boolean) => {
     busyRef.current = busy
+    setBusyUi(busy)
   }, [])
+
+  const cue = nextCue(state)
 
   const scenes: Record<ShowState['scene'], ReactNode> = {
     standby: <StandbyScene state={state} setBusy={setBusy} />,
@@ -124,7 +146,17 @@ export function App() {
           />
         ))}
       </div>
-      {scenes[state.scene]}
+      <div
+        key={state.scene === 'decibel' ? `decibel-${state.step}` : state.scene}
+        className="scene-fade"
+      >
+        {scenes[state.scene]}
+      </div>
+      {cue && !busyUi && !escHolding && (
+        <div className="cue-chip">
+          {CONFIG.copy.cuePrefix} {cue}
+        </div>
+      )}
       {escHolding && (
         <div className="reset-overlay">
           <span>{CONFIG.copy.escHoldHint}</span>

@@ -37,6 +37,58 @@
   100% { transform: translate(-1vw, 108vh) rotate(420deg); }
 }
 
+/* 장면 전환 페이드 */
+.scene-fade {
+  height: 100%;
+  animation: scene-in 0.4s ease-out;
+}
+@keyframes scene-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 운영자 큐 칩 — 입력 가능할 때만 좌하단에 은은하게 */
+.cue-chip {
+  position: fixed;
+  left: 1.2rem;
+  bottom: 1.2rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--choco);
+  background: rgba(255, 246, 221, 0.92);
+  border: 2px solid rgba(176, 124, 76, 0.5);
+  border-radius: 10px;
+  padding: 0.35rem 0.85rem;
+  animation: cue-in 0.35s ease-out;
+  z-index: 5;
+}
+@keyframes cue-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/* 데시벨 시도 진행 도트 */
+.attempt-dots {
+  display: flex;
+  gap: 0.7rem;
+}
+.attempt-dots span {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 246, 221, 0.7);
+  border: 3px solid var(--wood);
+}
+.attempt-dots span.done { background: var(--wood); }
+.attempt-dots span.current {
+  border-color: var(--gold);
+  background: var(--gold);
+  animation: dot-pulse 0.8s ease-in-out infinite;
+}
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+}
+
 /* 크림색 말풍선 타이틀 */
 .scene-title {
   font-size: 3.4rem;
