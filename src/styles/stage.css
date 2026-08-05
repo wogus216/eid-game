@@ -30,7 +30,8 @@
   gap: 4rem;
 }
 .ground-layer > * { flex: 0 0 auto; }
-.ground-layer.tight { gap: 2.5rem; }
+/* 결과 화면 전용 — 선물 라운드 묶음 사이를 카드 간격보다 확실히 벌린다 */
+.ground-layer.tight { gap: 5rem; }
 
 /* 접지 그림자 — 물체 밑변에 깔리는 타원 */
 .grounded {
@@ -198,6 +199,26 @@
 @keyframes cue-in {
   from { opacity: 0; transform: translateY(6px); }
 }
+/* 재추첨 — 큐 칩의 거울상. 사회자가 마우스로 누를 수 있는 유일한 운영 버튼 */
+.redraw-btn {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--choco);
+  background: rgba(255, 246, 221, 0.92);
+  border: 2px solid rgba(176, 124, 76, 0.5);
+  border-radius: 10px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  animation: cue-in 0.35s ease-out;
+  z-index: 5;
+}
+.redraw-btn:hover { background: rgba(255, 252, 240, 0.98); }
+.redraw-btn:active { transform: translateY(1px); }
+
 .muted-chip {
   position: fixed;
   left: 1.2rem;
@@ -554,6 +575,15 @@
   border-style: dashed;
   background: transparent;
 }
+/* 게시판 제목 — 지금 뽑고 있는 선물 라운드 */
+.board-label {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--choco);
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
 
 /* 스핀 중 구호 — 화면 하단 고정이라 돌림판 위치에 영향 없음 */
 .chant {
@@ -625,6 +655,27 @@
   0%, 100% { transform: rotate(-1.2deg) scale(1); }
   50% { transform: rotate(1.2deg) scale(1.04); }
 }
+/* 선물 라운드 묶음 — 1차와 2차를 눈으로 구분되게 띄운다 */
+.prize-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+.prize-label {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--choco);
+  background: rgba(255, 246, 221, 0.92);
+  border: 3px solid var(--wood);
+  border-radius: 999px;
+  padding: 0.25rem 1.4rem;
+}
+.prize-cards {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.4rem;
+}
 .card-stand {
   animation: card-in 0.7s cubic-bezier(0.2, 1.5, 0.4, 1) both;
   animation-delay: calc(var(--i, 0) * 0.22s);
@@ -636,8 +687,8 @@
 .result-card {
   position: relative;
   overflow: hidden;
-  width: 212px;
-  height: 280px;
+  width: 190px;
+  height: 256px;
   border-radius: 28px;
   background: var(--cream);
   border: 6px solid var(--gold);
@@ -653,7 +704,7 @@
   display: flex;
   align-items: baseline;
   gap: 0.15rem;
-  font-size: 6rem;
+  font-size: 5.2rem;
   font-weight: 900;
   line-height: 1;
   color: var(--tulip);
@@ -661,15 +712,15 @@
 }
 /* 순번 배지 — 장식이 아니라 '몇 번째 당첨자'라는 정보 */
 .card-rank {
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 32%, #ffe9ad, var(--gold) 72%);
   box-shadow: 0 3px 0 rgba(90, 70, 52, 0.2), inset 0 0 0 3px rgba(255, 255, 255, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 900;
   color: #fff;
   text-shadow: 0 1px 2px rgba(140, 95, 20, 0.5);
@@ -694,7 +745,7 @@
   0% { transform: translateX(-120%); }
   45%, 100% { transform: translateX(120%); }
 }
-.result-card-label { font-size: 2rem; color: var(--choco); }
+.result-card-label { font-size: 1.7rem; color: var(--choco); }
 .restart-btn {
   position: fixed;
   bottom: 4vh;

@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
-import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState, type ShowAction } from '../state/showMachine'
+import {
+  reduce,
+  initialState,
+  DECIBEL_LAST_STEP,
+  attemptIndexOf,
+  isRunningStep,
+  roundStartOf,
+  canRedraw,
+  type ShowState,
+  type ShowAction,
+} from '../state/showMachine'
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { Scenery } from '../components/Scenery'
@@ -24,14 +34,21 @@ function nextCue(s: ShowState): string | null {
   switch (s.scene) {
     case 'standby':
       return CONFIG.copy.cue.standby
-    case 'decibel':
-      return s.step < DECIBEL_LAST_STEP
-        ? CONFIG.copy.cue.attempt(s.step + 1)
-        : CONFIG.copy.cue.toRoulette
-    case 'roulette':
-      return s.winners.length < CONFIG.winnerCount
-        ? CONFIG.copy.cue.draw(s.winners.length + 1)
-        : CONFIG.copy.cue.toResult
+    case 'decibel': {
+      if (s.step === DECIBEL_LAST_STEP) return CONFIG.copy.cue.toRoulette
+      const next = s.step + 1
+      const n = attemptIndexOf(next) + 1
+      return isRunningStep(next)
+        ? CONFIG.copy.cue.attemptStart(n)
+        : CONFIG.copy.cue.attemptReady(n)
+    }
+    case 'roulette': {
+      const round = CONFIG.prizeRounds[s.step]
+      const filled = s.winners.length - roundStartOf(s.step)
+      if (round && filled < round.count) return CONFIG.copy.cue.draw(filled + 1)
+      const next = CONFIG.prizeRounds[s.step + 1]
+      return next ? CONFIG.copy.cue.nextRound(next.label) : CONFIG.copy.cue.toResult
+    }
     case 'result':
       return null
   }
@@ -165,7 +182,13 @@ export function App() {
         ))}
       </div>
       <div
-        key={state.scene === 'decibel' ? `decibel-${state.step}` : state.scene}
+        key={
+          state.scene === 'decibel'
+            ? state.step === 0
+              ? 'decibel-intro'
+              : `decibel-a${attemptIndexOf(state.step)}`
+            : state.scene
+        }
         className="scene-fade"
       >
         {scenes[state.scene]}
@@ -177,6 +200,22 @@ export function App() {
         <div className="cue-chip">
           {CONFIG.copy.cuePrefix} {cue}
         </div>
+      )}
+      {canRedraw(state) && !busyUi && !escHolding && (
+        <button
+          type="button"
+          className="redraw-btn"
+          // window pointerdown 핸들러가 터치 탭을 NEXT로 해석한다 — 여기서 끊지 않으면
+          // 터치로 누를 때 재추첨과 다음 추첨이 함께 나간다
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            // 포커스가 남으면 다음 Enter가 진행이 아니라 이 버튼을 다시 누른다
+            e.currentTarget.blur()
+            dispatch({ type: 'REDRAW_LAST' })
+          }}
+        >
+          {CONFIG.copy.redrawButton}
+        </button>
       )}
       {muted && <div className="muted-chip">{CONFIG.copy.mutedHint}</div>}
       {escHolding && (

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import type { CSSProperties } from 'react'
 import { CONFIG } from '../../data/config'
+import { roundStartOf } from '../../state/showMachine'
 import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
 import { SpeechBubble } from '../../components/SpeechBubble'
@@ -27,6 +28,16 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
     return () => timers.forEach(clearTimeout)
   }, [count])
 
+  // 선물 라운드별로 묶는다. --i는 전체 순번이라 카드가 왼쪽부터 차례로 튀어나온다.
+  const groups = CONFIG.prizeRounds.map((round, r) => {
+    const start = roundStartOf(r)
+    return {
+      label: round.label,
+      winners: state.winners.slice(start, start + round.count),
+      start,
+    }
+  })
+
   return (
     <div className="scene">
       <div className="rays" aria-hidden />
@@ -43,18 +54,25 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
         <SpeechBubble className="result-title">{CONFIG.copy.resultTitle}</SpeechBubble>
       </div>
       <div className="ground-layer tight">
-        {state.winners.map((n, i) => (
-          <div
-            key={`${n}-${i}`}
-            className="card-stand grounded"
-            style={{ '--i': i } as CSSProperties}
-          >
-            <div className="result-card">
-              <span className="card-rank">{i + 1}</span>
-              <span className="card-num">
-                {n}
-                <span className="result-card-label">번</span>
-              </span>
+        {groups.map((g) => (
+          <div key={g.label} className="prize-group">
+            <div className="prize-label">{g.label}</div>
+            <div className="prize-cards">
+              {g.winners.map((n, i) => (
+                <div
+                  key={`${n}-${i}`}
+                  className="card-stand grounded"
+                  style={{ '--i': g.start + i } as CSSProperties}
+                >
+                  <div className="result-card">
+                    <span className="card-rank">{i + 1}</span>
+                    <span className="card-num">
+                      {n}
+                      <span className="result-card-label">번</span>
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         ))}
