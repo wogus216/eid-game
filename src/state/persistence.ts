@@ -1,6 +1,7 @@
 import type { ShowState } from './showMachine'
 
-const KEY = 'eid-decibel-game-v1'
+// v1은 당첨자 4명 시절 구조 — 리허설 때 저장된 상태가 새 구조로 복구되지 않게 키를 올린다
+const KEY = 'eid-decibel-game-v2'
 const SCENES = ['standby', 'decibel', 'roulette', 'result']
 
 export function save(state: ShowState): void {

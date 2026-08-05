@@ -45,45 +45,45 @@ describe('persistence', () => {
   })
 
   it('load returns null on malformed JSON', () => {
-    globalThis.localStorage.setItem('eid-decibel-game-v1', 'not json')
+    globalThis.localStorage.setItem('eid-decibel-game-v2', 'not json')
     expect(load()).toBeNull()
   })
 
   it('load returns null on invalid scene string', () => {
     const badState = { ...initialState, scene: 'invalid' }
-    globalThis.localStorage.setItem('eid-decibel-game-v1', JSON.stringify(badState))
+    globalThis.localStorage.setItem('eid-decibel-game-v2', JSON.stringify(badState))
     expect(load()).toBeNull()
   })
 
   it('load returns null when winners is not an array', () => {
     const badState = { ...initialState, winners: 'not an array' }
-    globalThis.localStorage.setItem('eid-decibel-game-v1', JSON.stringify(badState))
+    globalThis.localStorage.setItem('eid-decibel-game-v2', JSON.stringify(badState))
     expect(load()).toBeNull()
   })
 
   it('load returns null when drawnHistory is not an array', () => {
     const badState = { ...initialState, drawnHistory: 123 }
-    globalThis.localStorage.setItem('eid-decibel-game-v1', JSON.stringify(badState))
+    globalThis.localStorage.setItem('eid-decibel-game-v2', JSON.stringify(badState))
     expect(load()).toBeNull()
   })
 
   it('load returns null when entryCount is not a number', () => {
     const badState = { ...initialState, entryCount: 'not a number' }
-    globalThis.localStorage.setItem('eid-decibel-game-v1', JSON.stringify(badState))
+    globalThis.localStorage.setItem('eid-decibel-game-v2', JSON.stringify(badState))
     expect(load()).toBeNull()
   })
 
   it('load returns null when step is not a number', () => {
     const badState = { ...initialState, step: null }
-    globalThis.localStorage.setItem('eid-decibel-game-v1', JSON.stringify(badState))
+    globalThis.localStorage.setItem('eid-decibel-game-v2', JSON.stringify(badState))
     expect(load()).toBeNull()
   })
 
   it('clear removes the key', () => {
     save(initialState)
-    expect(globalThis.localStorage.getItem('eid-decibel-game-v1')).not.toBeNull()
+    expect(globalThis.localStorage.getItem('eid-decibel-game-v2')).not.toBeNull()
     clear()
-    expect(globalThis.localStorage.getItem('eid-decibel-game-v1')).toBeNull()
+    expect(globalThis.localStorage.getItem('eid-decibel-game-v2')).toBeNull()
     expect(load()).toBeNull()
   })
 })
