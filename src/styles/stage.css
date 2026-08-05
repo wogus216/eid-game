@@ -554,6 +554,15 @@
   border-style: dashed;
   background: transparent;
 }
+/* 게시판 제목 — 지금 뽑고 있는 선물 라운드 */
+.board-label {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--choco);
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
 
 /* 스핀 중 구호 — 화면 하단 고정이라 돌림판 위치에 영향 없음 */
 .chant {

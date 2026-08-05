@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CONFIG } from '../../data/config'
+import { roundStartOf } from '../../state/showMachine'
 import { Mascot } from '../../components/Mascot'
 import { SpeechBubble } from '../../components/SpeechBubble'
 import { sfx } from '../../audio/sfx'
@@ -9,20 +10,24 @@ const SPIN_MS = 3800
 const ALMOST_MS = 1400 // 멈추기 전 "나와라 나와라…!" 구간
 
 export function RouletteScene({ state, setBusy }: SceneProps) {
-  const { winners, entryCount } = state
+  const { winners, entryCount, step } = state
+  const round = CONFIG.prizeRounds[step]
+  // 보드에는 현재 라운드에서 뽑힌 번호만 올라간다
+  const roundWinners = winners.slice(roundStartOf(step))
   const [spinning, setSpinning] = useState(false)
   const [almost, setAlmost] = useState(false)
   const [flick, setFlick] = useState<number | null>(null) // 스핀 중 스쳐가는 번호
-  const [revealed, setRevealed] = useState(winners.length) // 새로고침 복구 시 전부 공개 상태
+  const [revealed, setRevealed] = useState(roundWinners.length) // 새로고침 복구 시 전부 공개 상태
   const lastSeen = useRef(winners.join(','))
 
   useEffect(() => {
     const key = winners.join(',')
     if (key !== lastSeen.current && winners.length > 0) {
       lastSeen.current = key
+      const filled = winners.length - roundStartOf(step)
       setSpinning(true)
       setAlmost(false)
-      setRevealed(winners.length - 1)
+      setRevealed(filled - 1)
       setBusy(true)
 
       // 번호 플리커 — 바퀴의 감속 곡선과 같은 리듬으로 간격을 벌린다
@@ -43,7 +48,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         setSpinning(false)
         setAlmost(false)
         setFlick(null)
-        setRevealed(winners.length)
+        setRevealed(filled)
         setBusy(false)
         sfx.reveal()
       }, SPIN_MS)
@@ -55,15 +60,19 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         setBusy(false)
       }
     }
-  }, [winners, entryCount, setBusy])
+  }, [winners, entryCount, step, setBusy])
 
-  const current = winners[winners.length - 1]
-  const showCard = winners.length > 0 && revealed >= winners.length
+  // 라운드가 바뀌면 winners는 그대로인 채 보드만 비워진다 — revealed를 라운드 안으로 가둔다
+  const shown = Math.min(revealed, roundWinners.length)
+  const current = roundWinners[roundWinners.length - 1]
+  const showCard = roundWinners.length > 0 && shown >= roundWinners.length
 
   return (
     <div className="scene">
       <div className="sky-layer">
-        <SpeechBubble>{CONFIG.copy.rouletteTitle}</SpeechBubble>
+        <SpeechBubble>
+          {step > 0 ? CONFIG.copy.rouletteTitleNext : CONFIG.copy.rouletteTitle}
+        </SpeechBubble>
       </div>
       <div className="ground-layer">
         <div className="grounded wheel-stand">
@@ -87,12 +96,13 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
           </div>
         </div>
         <div className="winner-board grounded">
-          {winners.slice(0, revealed).map((n, i) => (
+          <div className="board-label">{round.label}</div>
+          {roundWinners.slice(0, shown).map((n, i) => (
             <div key={`${n}-${i}`} className="winner-chip">
               {i + 1}번째 · <strong>{n}번</strong>
             </div>
           ))}
-          {Array.from({ length: CONFIG.prizeRounds[state.step].count - revealed }, (_, i) => (
+          {Array.from({ length: round.count - shown }, (_, i) => (
             <div key={`empty-${i}`} className="winner-chip empty">
               ?
             </div>

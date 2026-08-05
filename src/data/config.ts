@@ -20,6 +20,7 @@ export const CONFIG = {
     standbyTitle: '안녕! 난 꾸미야 👋',
     decibelIntro: '소리 크게 낼 준비 됐어?',
     rouletteTitle: '누가 될까… 두근두근',
+    rouletteTitleNext: '한 번 더 간다! 두근두근',
     rouletteChant: '돌려 돌려 돌림판!',
     rouletteAlmost: '나와라 나와라…!',
     resultTitle: '축하해! 오늘 정말 멋졌어',
