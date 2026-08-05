@@ -55,11 +55,21 @@ npm run lint         # 코드 스타일 검사
 
 ## 마스코트 이미지 교체
 
-마스코트는 `public/mascot.svg`에 저장되어 있습니다.
+마스코트는 `public/mascot.png`(누끼·광원 보정 완료)를 사용합니다. 같은 폴더에
+`mascot_original.png`(제공 원본)와 `mascot_cutout.png`(누끼 직후, 보정 전)를 보존해
+두었으니 보정 강도를 바꾸고 싶으면 `mascot_cutout.png`에서 다시 처리하면 됩니다.
 
-**최종 이미지 받으면:**
-1. 새 이미지로 `public/mascot.svg` 교체 (또는 `public/mascot.png` 추가 후 코드에서 확장자 수정)
-2. 이미지 파일을 `public/` 디렉토리에 배치하면 앱 어디서나 자동 로드
+**새 이미지를 받으면:** `public/mascot.png`를 교체하면 앱 전체에 반영됩니다.
+
+## 폰트
+
+한글·숫자 모두 **주아체(Jua)** 한 가지를 씁니다.
+
+- 파일: `src/styles/fonts/Jua.woff2` (Vite가 번들, 런타임 외부 요청 없음)
+- 라이선스: SIL Open Font License 1.1 — 원문 `src/styles/fonts/Jua.LICENSE.txt`,
+  배포본에서도 `/assets/fonts/Jua.LICENSE.txt`로 서빙
+- 출처: Google Fonts / google/fonts 저장소 `ofl/jua`
+- 굵기가 1종뿐이라 `font-synthesis: none`으로 가짜 굵게를 끄고, 위계는 크기로만 줍니다
 
 ## 기술 스택
 

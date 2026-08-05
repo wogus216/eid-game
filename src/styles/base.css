@@ -1,3 +1,14 @@
+/* 주아체 — SIL OFL 1.1 (라이선스 원문: src/styles/fonts/Jua.LICENSE.txt,
+   배포본은 /assets/fonts/Jua.LICENSE.txt). 로컬 woff2만 사용하고
+   런타임에 외부 요청을 하지 않는다. */
+@font-face {
+  font-family: 'Jua';
+  src: url('./fonts/Jua.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html, body, #root { height: 100%; }
 
@@ -9,7 +20,10 @@ html, body, #root { height: 100%; }
 body {
   background: linear-gradient(var(--sky-high) 0%, #aee4f8 55%, var(--sky) 100%);
   color: var(--choco);
-  font-family: "Apple SD Gothic Neo", "Pretendard", "Malgun Gothic", sans-serif;
+  font-family: 'Jua', "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* 주아체는 굵기 1종이라 브라우저가 만드는 가짜 굵게(synthetic bold)를 끈다.
+     위계는 굵기가 아니라 크기로만 준다. */
+  font-synthesis: none;
   overflow: hidden;
   user-select: none;
 }
