@@ -9,7 +9,7 @@
 }
 .sky-layer {
   position: absolute;
-  top: 5vh;
+  top: 7vh;
   left: 0;
   right: 0;
   display: flex;
@@ -233,7 +233,9 @@
 /* 꾸미의 말풍선 — 꼬리가 화자를 가리킨다 */
 .scene-title {
   position: relative;
-  font-size: 3.4rem;
+  /* 1920 무대에서는 3.4rem으로 뒷줄 가독성을 지키되,
+     좁은 화면에서는 말풍선이 게이지를 덮지 않도록 함께 줄어든다 */
+  font-size: clamp(1.7rem, 2.9vw, 3.4rem);
   color: var(--choco);
   background: var(--cream);
   padding: 1.1rem 2.6rem;
@@ -306,7 +308,7 @@
 .gauge {
   position: relative;
   width: 150px;
-  height: 44vh;
+  height: 38vh;
   border: 10px solid var(--wood);
   outline: 4px solid var(--wood-deep);
   border-radius: 26px;
