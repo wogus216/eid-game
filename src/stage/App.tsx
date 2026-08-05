@@ -5,6 +5,7 @@ import { CONFIG } from '../data/config'
 import { Scenery } from '../components/Scenery'
 import { Ground } from '../components/Ground'
 import { sfx } from '../audio/sfx'
+import { useShowGuards } from './useShowGuards'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
 import { RouletteScene } from './scenes/RouletteScene'
@@ -49,6 +50,9 @@ export function App() {
   const [muted, setMuted] = useState(false)
 
   useEffect(() => save(state), [state])
+
+  // 대기 화면에서는 잃을 진행이 없으므로 이탈 확인을 걸지 않는다
+  useShowGuards(state.scene !== 'standby')
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
