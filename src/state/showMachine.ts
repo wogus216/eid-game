@@ -31,6 +31,26 @@ export function isRunningStep(step: number): boolean {
   return step > 0 && step % 2 === 0
 }
 
+// roulette 씬에서 step은 '현재 선물 라운드 인덱스'를 뜻한다.
+export const TOTAL_WINNERS = CONFIG.prizeRounds.reduce((sum, r) => sum + r.count, 0)
+
+export function roundStartOf(round: number): number {
+  return CONFIG.prizeRounds.slice(0, round).reduce((sum, r) => sum + r.count, 0)
+}
+
+export function filledInRound(state: ShowState): number {
+  return state.winners.length - roundStartOf(state.step)
+}
+
+// 재추첨은 현재 라운드에서 뽑은 게 있고 뽑을 번호가 남아 있을 때만 가능하다
+export function canRedraw(state: ShowState): boolean {
+  return (
+    state.scene === 'roulette' &&
+    filledInRound(state) > 0 &&
+    state.drawnHistory.length < state.entryCount
+  )
+}
+
 export const initialState: ShowState = {
   scene: 'standby',
   step: 0,
@@ -42,7 +62,9 @@ export const initialState: ShowState = {
 const SCENE_ORDER: SceneId[] = ['standby', 'decibel', 'roulette', 'result']
 
 function lastStepOf(scene: SceneId): number {
-  return scene === 'decibel' ? DECIBEL_LAST_STEP : 0
+  if (scene === 'decibel') return DECIBEL_LAST_STEP
+  if (scene === 'roulette') return CONFIG.prizeRounds.length - 1
+  return 0
 }
 
 export function reduce(
@@ -60,7 +82,7 @@ export function reduce(
 
     case 'ADJUST_ENTRY': {
       if (state.scene !== 'standby') return state
-      const entryCount = Math.min(CONFIG.maxEntry, Math.max(CONFIG.winnerCount, state.entryCount + action.delta))
+      const entryCount = Math.min(CONFIG.maxEntry, Math.max(TOTAL_WINNERS, state.entryCount + action.delta))
       return { ...state, entryCount }
     }
 
@@ -72,12 +94,17 @@ export function reduce(
           if (state.step < DECIBEL_LAST_STEP) return { ...state, step: state.step + 1 }
           return { ...state, scene: 'roulette', step: 0 }
         case 'roulette': {
-          if (state.winners.length >= CONFIG.winnerCount) {
-            return { ...state, scene: 'result', step: 0 }
+          const round = CONFIG.prizeRounds[state.step]
+          if (round && filledInRound(state) < round.count) {
+            if (state.drawnHistory.length >= state.entryCount) return state
+            const n = drawOne(state.entryCount, new Set(state.drawnHistory), randInt)
+            return { ...state, winners: [...state.winners, n], drawnHistory: [...state.drawnHistory, n] }
           }
-          if (state.drawnHistory.length >= state.entryCount) return state
-          const n = drawOne(state.entryCount, new Set(state.drawnHistory), randInt)
-          return { ...state, winners: [...state.winners, n], drawnHistory: [...state.drawnHistory, n] }
+          // 정원이 찼다 — 다음 라운드가 있으면 뽑지 않고 넘어가 선물 전달 시간을 준다
+          if (state.step < CONFIG.prizeRounds.length - 1) {
+            return { ...state, step: state.step + 1 }
+          }
+          return { ...state, scene: 'result', step: 0 }
         }
         case 'result':
           return state
@@ -94,8 +121,7 @@ export function reduce(
     }
 
     case 'REDRAW_LAST': {
-      if (state.scene !== 'roulette' || state.winners.length === 0) return state
-      if (state.drawnHistory.length >= state.entryCount) return state
+      if (!canRedraw(state)) return state
       const winners = state.winners.slice(0, -1)
       const n = drawOne(state.entryCount, new Set(state.drawnHistory), randInt)
       return { ...state, winners: [...winners, n], drawnHistory: [...state.drawnHistory, n] }

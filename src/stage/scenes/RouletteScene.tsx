@@ -92,7 +92,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
               {i + 1}번째 · <strong>{n}번</strong>
             </div>
           ))}
-          {Array.from({ length: CONFIG.winnerCount - revealed }, (_, i) => (
+          {Array.from({ length: CONFIG.prizeRounds[state.step].count - revealed }, (_, i) => (
             <div key={`empty-${i}`} className="winner-chip empty">
               ?
             </div>

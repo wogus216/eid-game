@@ -2,7 +2,11 @@ export const CONFIG = {
   maxEntry: 100,
   defaultEntry: 100,
   targetDb: 100,
-  winnerCount: 4,
+  // 선물은 1차 3개 + 2차 3개. 돌림판은 3명을 뽑아 발표하고, 한 번 멈췄다 다음 3명을 뽑는다.
+  prizeRounds: [
+    { label: '1차 선물', count: 3 },
+    { label: '2차 선물', count: 3 },
+  ],
   // 시도별 대사는 그 시도와 함께 산다 — say는 진행 중, done은 끝난 뒤 꾸미의 말.
   attempts: [
     { peakDb: 92, success: false, say: '자, 다 같이 소리 질러!', done: '오— 좋았어! 근데 더 할 수 있지?' },
@@ -36,9 +40,11 @@ export const CONFIG = {
       attemptStart: (n: number) => `${n}차 함성 시작!`,
       toRoulette: '돌림판으로',
       draw: (n: number) => `${n}번째 추첨`,
+      nextRound: (label: string) => `${label} 추첨`,
       toResult: '결과 발표',
     },
   },
 } as const
 
 export type AttemptSpec = (typeof CONFIG.attempts)[number]
+export type PrizeRound = (typeof CONFIG.prizeRounds)[number]

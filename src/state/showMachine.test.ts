@@ -5,6 +5,10 @@ import {
   DECIBEL_LAST_STEP,
   attemptIndexOf,
   isRunningStep,
+  TOTAL_WINNERS,
+  roundStartOf,
+  filledInRound,
+  canRedraw,
   type ShowState,
 } from './showMachine'
 import { CONFIG } from '../data/config'
@@ -28,12 +32,12 @@ describe('standby', () => {
     expect(s.entryCount).toBe(CONFIG.maxEntry)
   })
 
-  it('clamps entryCount to at least CONFIG.winnerCount', () => {
+  it('clamps entryCount to at least the total winner count', () => {
     let s = initialState
-    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount + 1) })
-    expect(s.entryCount).toBe(CONFIG.winnerCount)
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - TOTAL_WINNERS + 1) })
+    expect(s.entryCount).toBe(TOTAL_WINNERS)
     s = reduce(s, { type: 'ADJUST_ENTRY', delta: -1 })
-    expect(s.entryCount).toBe(CONFIG.winnerCount) // doesn't go below
+    expect(s.entryCount).toBe(TOTAL_WINNERS) // 더 내려가지 않는다
   })
 
   it('NEXT moves to decibel', () => {
@@ -85,15 +89,34 @@ describe('decibel', () => {
 })
 
 describe('roulette', () => {
-  it('draws one winner per NEXT until winnerCount, then result', () => {
+  it('fills one round at a time, switching rounds without drawing', () => {
     let s = advanceTo('roulette')
-    for (let i = 0; i < CONFIG.winnerCount; i++) {
+    expect(s.step).toBe(0)
+    // 1차 3명
+    for (let i = 0; i < CONFIG.prizeRounds[0].count; i++) {
       s = reduce(s, { type: 'NEXT' }, seq(0))
       expect(s.winners.length).toBe(i + 1)
     }
-    expect(new Set(s.winners).size).toBe(CONFIG.winnerCount) // 중복 없음
-    s = reduce(s, { type: 'NEXT' })
+    // 정원이 찼으면 다음 NEXT는 추첨 없이 라운드만 넘긴다
+    const afterFirstRound = s.winners.length
+    s = reduce(s, { type: 'NEXT' }, seq(0))
+    expect(s.step).toBe(1)
+    expect(s.winners.length).toBe(afterFirstRound)
+    expect(filledInRound(s)).toBe(0)
+    // 2차 3명
+    for (let i = 0; i < CONFIG.prizeRounds[1].count; i++) {
+      s = reduce(s, { type: 'NEXT' }, seq(0))
+    }
+    expect(s.winners.length).toBe(TOTAL_WINNERS)
+    expect(new Set(s.winners).size).toBe(TOTAL_WINNERS) // 라운드 간에도 중복 없음
+    s = reduce(s, { type: 'NEXT' }, seq(0))
     expect(s.scene).toBe('result')
+  })
+
+  it('roundStartOf marks each round boundary', () => {
+    expect(roundStartOf(0)).toBe(0)
+    expect(roundStartOf(1)).toBe(CONFIG.prizeRounds[0].count)
+    expect(roundStartOf(CONFIG.prizeRounds.length)).toBe(TOTAL_WINNERS)
   })
 
   it('REDRAW_LAST replaces last winner and never repeats history', () => {
@@ -113,13 +136,24 @@ describe('roulette', () => {
     expect(s.scene).toBe('roulette')
   })
 
-  it('REDRAW_LAST is a no-op once the draw pool is exhausted after all winners are drawn', () => {
+  it('REDRAW_LAST right after a round switch never touches the previous round', () => {
+    let s = advanceTo('roulette')
+    for (let i = 0; i < CONFIG.prizeRounds[0].count; i++) s = reduce(s, { type: 'NEXT' }, seq(0))
+    s = reduce(s, { type: 'NEXT' }, seq(0)) // 2차로 전환
+    expect(s.step).toBe(1)
+    expect(canRedraw(s)).toBe(false)
+    const before = s
+    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0))
+    expect(s).toEqual(before) // 1차 당첨자는 그대로
+  })
+
+  it('REDRAW_LAST is a no-op once the draw pool is exhausted', () => {
     let s = initialState
-    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount) })
-    expect(s.entryCount).toBe(CONFIG.winnerCount)
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - TOTAL_WINNERS) })
+    expect(s.entryCount).toBe(TOTAL_WINNERS)
     while (s.scene !== 'roulette') s = reduce(s, { type: 'NEXT' }, seq(0))
-    for (let i = 0; i < CONFIG.winnerCount; i++) s = reduce(s, { type: 'NEXT' }, seq(0))
-    expect(s.winners.length).toBe(CONFIG.winnerCount)
+    // 6명을 다 뽑는다 (중간에 라운드 전환 NEXT 한 번이 더 필요하다)
+    while (s.winners.length < TOTAL_WINNERS) s = reduce(s, { type: 'NEXT' }, seq(0))
     expect(s.drawnHistory.length).toBe(s.entryCount)
     const before = s
     s = reduce(s, { type: 'REDRAW_LAST' }, seq(0))
@@ -128,15 +162,14 @@ describe('roulette', () => {
 
   it('NEXT is a no-op once the draw pool is exhausted via redraws', () => {
     let s = initialState
-    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - CONFIG.winnerCount) })
+    s = reduce(s, { type: 'ADJUST_ENTRY', delta: -(CONFIG.defaultEntry - TOTAL_WINNERS) })
     while (s.scene !== 'roulette') s = reduce(s, { type: 'NEXT' }, seq(0))
-    for (let i = 0; i < CONFIG.winnerCount - 1; i++) s = reduce(s, { type: 'NEXT' }, seq(0))
-    expect(s.winners.length).toBe(CONFIG.winnerCount - 1)
-    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0)) // consumes the last remaining number in the pool
+    while (s.winners.length < TOTAL_WINNERS - 1) s = reduce(s, { type: 'NEXT' }, seq(0))
+    s = reduce(s, { type: 'REDRAW_LAST' }, seq(0)) // 풀의 마지막 번호를 소진시킨다
     expect(s.drawnHistory.length).toBe(s.entryCount)
-    expect(s.winners.length).toBe(CONFIG.winnerCount - 1)
+    expect(s.winners.length).toBe(TOTAL_WINNERS - 1)
     const before = s
-    s = reduce(s, { type: 'NEXT' }, seq(0)) // would draw the final winner but the pool is exhausted
+    s = reduce(s, { type: 'NEXT' }, seq(0)) // 마지막 한 명을 뽑으려 하지만 풀이 비었다
     expect(s).toEqual(before)
   })
 })
@@ -147,8 +180,8 @@ describe('RESTART', () => {
       scene: 'result',
       step: 0,
       entryCount: 87,
-      winners: [1, 2, 3, 4],
-      drawnHistory: [1, 2, 3, 4, 5],
+      winners: [1, 2, 3, 4, 5, 6],
+      drawnHistory: [1, 2, 3, 4, 5, 6, 7],
     }
     const next = reduce(s, { type: 'RESTART' })
     expect(next.scene).toBe('standby')

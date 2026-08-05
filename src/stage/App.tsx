@@ -5,6 +5,7 @@ import {
   DECIBEL_LAST_STEP,
   attemptIndexOf,
   isRunningStep,
+  roundStartOf,
   type ShowState,
   type ShowAction,
 } from '../state/showMachine'
@@ -40,10 +41,13 @@ function nextCue(s: ShowState): string | null {
         ? CONFIG.copy.cue.attemptStart(n)
         : CONFIG.copy.cue.attemptReady(n)
     }
-    case 'roulette':
-      return s.winners.length < CONFIG.winnerCount
-        ? CONFIG.copy.cue.draw(s.winners.length + 1)
-        : CONFIG.copy.cue.toResult
+    case 'roulette': {
+      const round = CONFIG.prizeRounds[s.step]
+      const filled = s.winners.length - roundStartOf(s.step)
+      if (round && filled < round.count) return CONFIG.copy.cue.draw(filled + 1)
+      const next = CONFIG.prizeRounds[s.step + 1]
+      return next ? CONFIG.copy.cue.nextRound(next.label) : CONFIG.copy.cue.toResult
+    }
     case 'result':
       return null
   }
