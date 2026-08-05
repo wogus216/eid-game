@@ -23,15 +23,15 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
       setRevealed(winners.length - 1)
       setBusy(true)
 
-      // 번호 플리커: 빠르게 돌다가 점점 느려지며 애간장
-      let delay = 55
+      // 번호 플리커 — 바퀴의 감속 곡선과 같은 리듬으로 간격을 벌린다
       let elapsed = 0
       let tickTimer: ReturnType<typeof setTimeout> | null = null
       const tick = () => {
         setFlick(1 + Math.floor(Math.random() * entryCount))
+        const t = Math.min(1, elapsed / SPIN_MS)
+        const delay = 42 + 430 * t ** 3
         elapsed += delay
-        if (elapsed > SPIN_MS * 0.5) delay = Math.min(delay * 1.3, 430)
-        if (elapsed < SPIN_MS - 120) tickTimer = setTimeout(tick, delay)
+        if (elapsed < SPIN_MS - 140) tickTimer = setTimeout(tick, delay)
       }
       tick()
 
@@ -62,20 +62,24 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         <h1 className="scene-title">{CONFIG.copy.rouletteTitle}</h1>
       </div>
       <div className="ground-layer">
-        <div className="grounded">
-          <div className={`wheel ${spinning ? 'spinning' : ''} ${almost ? 'almost' : ''}`}>
+        <div className="grounded wheel-stand">
+          <div className="wheel-pointer" aria-hidden />
+          <div
+            className={`wheel ${spinning ? 'spinning' : ''}`}
+            style={spinning ? { animationDuration: `${SPIN_MS}ms` } : undefined}
+          >
             {Array.from({ length: 12 }, (_, i) => (
               <div key={i} className="wheel-spoke" style={{ transform: `rotate(${i * 30}deg)` }} />
             ))}
-            <div className="wheel-center">
-              {spinning ? (
-                <span className={`wheel-flick ${almost ? 'almost' : ''}`}>{flick ?? '?'}</span>
-              ) : showCard ? (
-                <span className="wheel-number">{current}</span>
-              ) : (
-                '?'
-              )}
-            </div>
+          </div>
+          <div className="wheel-center">
+            {spinning ? (
+              <span className={`wheel-flick ${almost ? 'almost' : ''}`}>{flick ?? '?'}</span>
+            ) : showCard ? (
+              <span className="wheel-number">{current}</span>
+            ) : (
+              '?'
+            )}
           </div>
         </div>
         <div className="winner-board grounded">
