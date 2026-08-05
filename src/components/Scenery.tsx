@@ -31,18 +31,28 @@ export function Scenery() {
         d="M0 240 L0 196 Q220 160 420 192 Q640 226 860 186 Q1080 146 1300 190 Q1460 220 1600 194 L1600 240 Z"
         fill="#bcdfb2"
       />
-      {TREES.map((t, i) => {
-        const canopy = t.blossom ? '#efd3dc' : '#aad3a1'
-        const canopyLit = t.blossom ? '#f7e3ea' : '#bbdfb2'
-        return (
-          <g key={i} transform={`translate(${t.x} 232) scale(${t.s * 0.82})`}>
-            <rect x="-7" y="-38" width="14" height="40" rx="6" fill="#bcae9c" />
-            <circle cx="-24" cy="-50" r="24" fill={canopy} />
-            <circle cx="24" cy="-50" r="24" fill={canopy} />
-            <circle cx="0" cy="-66" r="30" fill={canopyLit} />
-          </g>
-        )
-      })}
+      {/* 세 무리로 나눠 서로 다른 주기로 흔들리게 한다 — 한 덩어리로 움직이면
+          바람이 아니라 기계처럼 보인다. 흔들림 폭은 --shout에 비례. */}
+      {[0, 1, 2].map((band) => (
+        <g
+          key={band}
+          className="sway-x"
+          style={{ animationDuration: `${1.5 + band * 0.4}s`, animationDelay: `${band * 0.22}s` }}
+        >
+          {TREES.filter((_, i) => i % 3 === band).map((t, i) => {
+            const canopy = t.blossom ? '#efd3dc' : '#aad3a1'
+            const canopyLit = t.blossom ? '#f7e3ea' : '#bbdfb2'
+            return (
+              <g key={i} transform={`translate(${t.x} 232) scale(${t.s * 0.82})`}>
+                <rect x="-7" y="-38" width="14" height="40" rx="6" fill="#bcae9c" />
+                <circle cx="-24" cy="-50" r="24" fill={canopy} />
+                <circle cx="24" cy="-50" r="24" fill={canopy} />
+                <circle cx="0" cy="-66" r="30" fill={canopyLit} />
+              </g>
+            )
+          })}
+        </g>
+      ))}
     </svg>
   )
 }

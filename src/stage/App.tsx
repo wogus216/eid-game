@@ -142,7 +142,7 @@ export function App() {
   }
 
   return (
-    <>
+    <div className="world">
       <Scenery />
       <Ground />
       <div className="petals" aria-hidden>
@@ -175,6 +175,6 @@ export function App() {
           <span>{CONFIG.copy.escHoldHint}</span>
         </div>
       )}
-    </>
+    </div>
   )
 }

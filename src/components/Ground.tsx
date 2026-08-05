@@ -39,25 +39,35 @@ const FLOWERS = [
   { x: 1528, y: 198, s: 0.64, c: '#ff9ab5' },
 ]
 
-function Tuft({ x, y, s }: { x: number; y: number; s: number }) {
+// 배치(translate/scale)는 바깥 g가, 흔들림은 안쪽 g가 맡는다.
+// SVG에서 CSS transform은 transform 속성을 덮어쓰므로 반드시 분리해야 한다.
+function swayStyle(i: number) {
+  return { animationDelay: `${(i % 5) * 0.17}s`, animationDuration: `${1.15 + (i % 3) * 0.3}s` }
+}
+
+function Tuft({ x, y, s, i }: { x: number; y: number; s: number; i: number }) {
   return (
-    <g transform={`translate(${x} ${y}) scale(${s})`} stroke="#4e9b3b" strokeWidth="9" fill="none" strokeLinecap="round">
-      <path d="M0 0 Q -8 -32 -26 -54" />
-      <path d="M0 0 Q -3 -40 -10 -72" stroke="#5cae46" />
-      <path d="M0 0 Q 4 -44 7 -78" />
-      <path d="M0 0 Q 11 -36 26 -58" stroke="#5cae46" />
+    <g transform={`translate(${x} ${y}) scale(${s})`}>
+      <g className="sway-item" style={swayStyle(i)} stroke="#4e9b3b" strokeWidth="9" fill="none" strokeLinecap="round">
+        <path d="M0 0 Q -8 -32 -26 -54" />
+        <path d="M0 0 Q -3 -40 -10 -72" stroke="#5cae46" />
+        <path d="M0 0 Q 4 -44 7 -78" />
+        <path d="M0 0 Q 11 -36 26 -58" stroke="#5cae46" />
+      </g>
     </g>
   )
 }
 
-function Flower({ x, y, s, c }: { x: number; y: number; s: number; c: string }) {
+function Flower({ x, y, s, c, i }: { x: number; y: number; s: number; c: string; i: number }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
-      <path d="M0 40 L0 -34" stroke="#4e9b3b" strokeWidth="7" strokeLinecap="round" fill="none" />
-      {[0, 72, 144, 216, 288].map((a) => (
-        <ellipse key={a} cx="0" cy="-50" rx="10" ry="14" fill={c} transform={`rotate(${a} 0 -36)`} />
-      ))}
-      <circle cx="0" cy="-36" r="8" fill="#ffd166" />
+      <g className="sway-item" style={swayStyle(i + 2)}>
+        <path d="M0 40 L0 -34" stroke="#4e9b3b" strokeWidth="7" strokeLinecap="round" fill="none" />
+        {[0, 72, 144, 216, 288].map((a) => (
+          <ellipse key={a} cx="0" cy="-50" rx="10" ry="14" fill={c} transform={`rotate(${a} 0 -36)`} />
+        ))}
+        <circle cx="0" cy="-36" r="8" fill="#ffd166" />
+      </g>
     </g>
   )
 }
@@ -78,10 +88,10 @@ export function Ground() {
       ))}
       <svg className="foreground" viewBox="0 0 1600 250" preserveAspectRatio="xMidYMax slice">
         {TUFTS.map((t, i) => (
-          <Tuft key={i} {...t} />
+          <Tuft key={i} {...t} i={i} />
         ))}
         {FLOWERS.map((f, i) => (
-          <Flower key={i} {...f} />
+          <Flower key={i} {...f} i={i} />
         ))}
       </svg>
     </div>

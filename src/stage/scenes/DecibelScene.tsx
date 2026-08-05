@@ -4,6 +4,7 @@ import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
 import { useDecibelAnim } from '../useDecibelAnim'
 import { sfx } from '../../audio/sfx'
+import { setShout, quake } from '../shout'
 import type { SceneProps } from '../App'
 
 function Gauge({ db, target, burst = false }: { db: number; target: number; burst?: boolean }) {
@@ -49,18 +50,27 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
     setBusy(true)
     setFinished(false)
     sfx.riseStart() // 함성이 커지는 지속음 — 게이지와 같이 자란다
-    return () => sfx.riseStop()
+    return () => {
+      sfx.riseStop()
+      setShout(0)
+    }
   }, [index, setBusy])
   const db = useDecibelAnim(index, spec.peakDb, () => {
     setFinished(true)
     setBusy(false)
     sfx.riseStop()
-    if (spec.success) sfx.breakthrough()
-    else sfx.fail()
+    if (spec.success) {
+      sfx.breakthrough()
+      quake() // 돌파 순간 세계가 한 번 크게 휜다
+    } else {
+      sfx.fail()
+    }
   })
+  // 소리와 세계의 반응은 같은 값을 본다. 시도가 끝나면 바람이 잦아든다.
   useEffect(() => {
     sfx.riseLevel(db / 110)
-  }, [db])
+    setShout(finished ? 0 : db / 110)
+  }, [db, finished])
   const isLastChance = index === CONFIG.attempts.length - 1
   const breakthrough = finished && spec.success
   return (
