@@ -28,11 +28,18 @@ function ac(): AudioContext | null {
 function tone(
   freq: number,
   dur: number,
-  opts: { type?: OscillatorType; gain?: number; slideTo?: number; delay?: number } = {},
+  opts: {
+    type?: OscillatorType
+    gain?: number
+    slideTo?: number
+    delay?: number
+    /** 어택이 길수록 '때리는' 소리가 아니라 '부풀어 오르는' 소리가 된다 */
+    attack?: number
+  } = {},
 ) {
   const c = ac()
   if (!c || !master) return
-  const { type = 'triangle', gain = 0.5, slideTo, delay = 0 } = opts
+  const { type = 'triangle', gain = 0.5, slideTo, delay = 0, attack } = opts
   const t0 = c.currentTime + delay
   const osc = c.createOscillator()
   const g = c.createGain()
@@ -41,7 +48,7 @@ function tone(
   if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(slideTo, 1), t0 + dur)
   // 클릭음 방지를 위해 0에서 올렸다가 0으로 내린다
   g.gain.setValueAtTime(0.0001, t0)
-  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(0.02, dur * 0.2))
+  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(attack ?? 0.02, dur * 0.6))
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
   osc.connect(g).connect(master)
   osc.start(t0)
@@ -57,11 +64,18 @@ function noiseBuffer(c: AudioContext, dur: number) {
 
 function noise(
   dur: number,
-  opts: { gain?: number; freq?: number; q?: number; type?: BiquadFilterType; delay?: number } = {},
+  opts: {
+    gain?: number
+    freq?: number
+    q?: number
+    type?: BiquadFilterType
+    delay?: number
+    attack?: number
+  } = {},
 ) {
   const c = ac()
   if (!c || !master) return
-  const { gain = 0.4, freq = 1400, q = 1, type = 'bandpass', delay = 0 } = opts
+  const { gain = 0.4, freq = 1400, q = 1, type = 'bandpass', delay = 0, attack = 0.004 } = opts
   const t0 = c.currentTime + delay
   const src = c.createBufferSource()
   src.buffer = noiseBuffer(c, dur)
@@ -70,7 +84,8 @@ function noise(
   filter.frequency.value = freq
   filter.Q.value = q
   const g = c.createGain()
-  g.gain.setValueAtTime(gain, t0)
+  g.gain.setValueAtTime(0.0001, t0)
+  g.gain.exponentialRampToValueAtTime(gain, t0 + Math.min(attack, dur * 0.6))
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
   src.connect(filter).connect(g).connect(master)
   src.start(t0)
@@ -158,14 +173,19 @@ const sfx = {
     noise(0.3, { gain: 0.12, freq: 500, q: 0.7, type: 'lowpass', delay: 0.02 })
   },
 
-  /** 목표 돌파 — 저음 폭발 + 상승 휘슬 + 장3화음 아르페지오 */
+  /** 목표 돌파 — 터지는 소리가 아니라 부풀어 오르는 소리.
+   * 초등 저학년 청중이 놀라지 않도록 저음 임팩트와 고역 크랙을 걷어내고,
+   * 어택을 늘려 환호처럼 차오르게 한다. 기쁨은 화음이 담당. */
   breakthrough() {
-    noise(0.7, { gain: 0.5, freq: 220, q: 0.6, type: 'lowpass' })
-    noise(0.35, { gain: 0.3, freq: 3200, q: 0.8 })
-    tone(70, 0.75, { type: 'sine', gain: 0.55, slideTo: 42 })
+    // 따뜻하게 차오르는 저역 스웰 (때리지 않음)
+    noise(0.85, { gain: 0.2, freq: 300, q: 0.5, type: 'lowpass', attack: 0.14 })
+    // 저음은 서브베이스 대신 부드러운 배음으로, 어택을 길게
+    tone(110, 0.8, { type: 'sine', gain: 0.24, slideTo: 82, attack: 0.12 })
+    // 위로 스치는 반짝임 — 크랙이 아니라 살짝 늦게 얹히는 광채
+    noise(0.5, { gain: 0.09, freq: 5200, q: 0.9, delay: 0.16, attack: 0.1 })
     const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5] // C5 E5 G5 C6 E6
     notes.forEach((f, i) => {
-      tone(f, 0.55, { type: 'triangle', gain: 0.34, delay: 0.06 + i * 0.075 })
+      tone(f, 0.6, { type: 'triangle', gain: 0.3, delay: 0.08 + i * 0.08, attack: 0.03 })
     })
   },
 
