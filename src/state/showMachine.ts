@@ -19,7 +19,17 @@ export type ShowAction =
   | { type: 'RESET' }
   | { type: 'RESTART' }
 
-export const DECIBEL_LAST_STEP = CONFIG.attempts.length // step 0=인트로, 1..N=시도
+// step 0=인트로, 홀수=k차 준비, 짝수=k차 함성. 시도 하나가 두 칸을 쓴다.
+export const DECIBEL_LAST_STEP = CONFIG.attempts.length * 2
+
+// step 해석은 여기서만 한다 — 화면과 큐 문구가 같은 규칙을 보게 하기 위해서다.
+export function attemptIndexOf(step: number): number {
+  return Math.ceil(step / 2) - 1
+}
+
+export function isRunningStep(step: number): boolean {
+  return step > 0 && step % 2 === 0
+}
 
 export const initialState: ShowState = {
   scene: 'standby',

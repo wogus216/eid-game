@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState } from './showMachine'
+import {
+  reduce,
+  initialState,
+  DECIBEL_LAST_STEP,
+  attemptIndexOf,
+  isRunningStep,
+  type ShowState,
+} from './showMachine'
 import { CONFIG } from '../data/config'
 
 const seq = (...values: number[]) => {
@@ -42,13 +49,38 @@ describe('standby', () => {
 })
 
 describe('decibel', () => {
-  it('steps through attempts then moves to roulette', () => {
-    let s = reduce(initialState, { type: 'NEXT' }) // decibel step 0
-    for (let i = 0; i < DECIBEL_LAST_STEP; i++) s = reduce(s, { type: 'NEXT' })
+  it('gives each attempt a ready step and a shout step', () => {
+    expect(DECIBEL_LAST_STEP).toBe(CONFIG.attempts.length * 2)
+    // 1차: 준비=1, 함성=2
+    expect(attemptIndexOf(1)).toBe(0)
+    expect(isRunningStep(1)).toBe(false)
+    expect(attemptIndexOf(2)).toBe(0)
+    expect(isRunningStep(2)).toBe(true)
+    // 3차: 준비=5, 함성=6
+    expect(attemptIndexOf(5)).toBe(2)
+    expect(isRunningStep(5)).toBe(false)
+    expect(attemptIndexOf(6)).toBe(2)
+    expect(isRunningStep(6)).toBe(true)
+  })
+
+  it('reaches roulette after two NEXTs per attempt', () => {
+    let s = reduce(initialState, { type: 'NEXT' }) // decibel step 0 (인트로)
+    for (let i = 0; i < CONFIG.attempts.length * 2; i++) s = reduce(s, { type: 'NEXT' })
     expect(s.scene).toBe('decibel')
     expect(s.step).toBe(DECIBEL_LAST_STEP)
     s = reduce(s, { type: 'NEXT' })
     expect(s.scene).toBe('roulette')
+  })
+
+  it('BACK returns from a shout step to its own ready step', () => {
+    let s = reduce(initialState, { type: 'NEXT' }) // 인트로
+    s = reduce(s, { type: 'NEXT' }) // 1차 준비
+    s = reduce(s, { type: 'NEXT' }) // 1차 함성
+    expect(isRunningStep(s.step)).toBe(true)
+    s = reduce(s, { type: 'BACK' })
+    expect(s.step).toBe(1)
+    expect(isRunningStep(s.step)).toBe(false)
+    expect(attemptIndexOf(s.step)).toBe(0) // 같은 시도로 돌아온다
   })
 })
 
