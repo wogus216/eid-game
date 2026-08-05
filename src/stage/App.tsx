@@ -4,6 +4,7 @@ import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { Scenery } from '../components/Scenery'
 import { Ground } from '../components/Ground'
+import { sfx } from '../audio/sfx'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
 import { RouletteScene } from './scenes/RouletteScene'
@@ -45,12 +46,14 @@ export function App() {
   const lastActionAt = useRef(0)
   const escTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [escHolding, setEscHolding] = useState(false)
+  const [muted, setMuted] = useState(false)
 
   useEffect(() => save(state), [state])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.repeat) return
+      sfx.unlock() // 브라우저 자동재생 정책 — 첫 키 입력에서 오디오 해제
       // busy 플래그는 렌더 이후에 세워지므로, 같은 프레임/연타로 들어온
       // 진행 키는 시간 기반으로 한 번 더 걸러준다
       const throttled = () => {
@@ -75,6 +78,10 @@ export function App() {
         case 'r':
         case 'R':
           if (!busyRef.current && !throttled()) dispatch({ type: 'REDRAW_LAST' })
+          break
+        case 'm':
+        case 'M':
+          setMuted(sfx.toggleMute())
           break
         case 'f':
         case 'F':
@@ -102,6 +109,7 @@ export function App() {
     // 모바일 테스트용: 터치 탭 = Enter (마우스 클릭에는 반응하지 않음)
     const onPointerDown = (e: PointerEvent) => {
       if (e.pointerType !== 'touch') return
+      sfx.unlock()
       const now = performance.now()
       if (now - lastActionAt.current < 300) return
       lastActionAt.current = now
@@ -161,6 +169,7 @@ export function App() {
           {CONFIG.copy.cuePrefix} {cue}
         </div>
       )}
+      {muted && <div className="muted-chip">{CONFIG.copy.mutedHint}</div>}
       {escHolding && (
         <div className="reset-overlay">
           <span>{CONFIG.copy.escHoldHint}</span>

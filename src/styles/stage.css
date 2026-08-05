@@ -137,6 +137,17 @@
 @keyframes cue-in {
   from { opacity: 0; transform: translateY(6px); }
 }
+.muted-chip {
+  position: fixed;
+  left: 1.2rem;
+  bottom: 3.4rem;
+  font-size: 0.92rem;
+  color: #fff;
+  background: rgba(160, 92, 76, 0.92);
+  border-radius: 10px;
+  padding: 0.3rem 0.8rem;
+  z-index: 5;
+}
 
 /* 데시벨 시도 진행 도트 */
 .attempt-dots { display: flex; gap: 0.7rem; }

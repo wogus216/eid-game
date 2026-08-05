@@ -3,6 +3,7 @@ import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
 import { useDecibelAnim } from '../useDecibelAnim'
+import { sfx } from '../../audio/sfx'
 import type { SceneProps } from '../App'
 
 function Gauge({ db, target, burst = false }: { db: number; target: number; burst?: boolean }) {
@@ -47,11 +48,19 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
   useEffect(() => {
     setBusy(true)
     setFinished(false)
+    sfx.riseStart() // 함성이 커지는 지속음 — 게이지와 같이 자란다
+    return () => sfx.riseStop()
   }, [index, setBusy])
   const db = useDecibelAnim(index, spec.peakDb, () => {
     setFinished(true)
     setBusy(false)
+    sfx.riseStop()
+    if (spec.success) sfx.breakthrough()
+    else sfx.fail()
   })
+  useEffect(() => {
+    sfx.riseLevel(db / 110)
+  }, [db])
   const isLastChance = index === CONFIG.attempts.length - 1
   const breakthrough = finished && spec.success
   return (

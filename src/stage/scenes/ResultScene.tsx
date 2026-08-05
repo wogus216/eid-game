@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import type { CSSProperties } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
+import { sfx } from '../../audio/sfx'
 import type { SceneProps } from '../App'
 
 // 폭죽 링: 위치/색/타이밍 고정 배치 (파스텔 톤)
@@ -14,6 +16,16 @@ const FIREWORKS = [
 ]
 
 export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () => void }) {
+  const count = state.winners.length
+  // 카드가 순차로 튀어나오는 리듬(0.22s 간격)에 맞춰 팝, 마지막에 팡파레
+  useEffect(() => {
+    const timers = Array.from({ length: count }, (_, i) =>
+      setTimeout(() => sfx.cardPop(i), i * 220),
+    )
+    timers.push(setTimeout(() => sfx.celebrate(), count * 220 + 120))
+    return () => timers.forEach(clearTimeout)
+  }, [count])
+
   return (
     <div className="scene">
       <div className="rays" aria-hidden />

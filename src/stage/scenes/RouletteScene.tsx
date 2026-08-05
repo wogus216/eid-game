@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
+import { sfx } from '../../audio/sfx'
 import type { SceneProps } from '../App'
 
 const SPIN_MS = 3800
@@ -28,6 +29,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
       let tickTimer: ReturnType<typeof setTimeout> | null = null
       const tick = () => {
         setFlick(1 + Math.floor(Math.random() * entryCount))
+        sfx.tick()
         const t = Math.min(1, elapsed / SPIN_MS)
         const delay = 42 + 430 * t ** 3
         elapsed += delay
@@ -42,6 +44,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
         setFlick(null)
         setRevealed(winners.length)
         setBusy(false)
+        sfx.reveal()
       }, SPIN_MS)
 
       return () => {
