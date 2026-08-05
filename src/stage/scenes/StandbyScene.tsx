@@ -10,7 +10,7 @@ export function StandbyScene({ state }: SceneProps) {
       </div>
       <div className="ground-layer">
         <div className="mascot-stand">
-          <Mascot size={260} />
+          <Mascot size={260} mood="wave" />
         </div>
       </div>
       <div className="entry-count">{CONFIG.copy.entryCountLabel(state.entryCount)}</div>

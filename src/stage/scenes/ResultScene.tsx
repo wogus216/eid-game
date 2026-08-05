@@ -58,7 +58,7 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
           </div>
         ))}
         <div className="mascot-stand">
-          <Mascot size={190} className="cheer" />
+          <Mascot size={190} mood="cheer" />
         </div>
       </div>
       {onRestart && (

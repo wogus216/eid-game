@@ -95,7 +95,10 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
           <span className="db-unit">dB</span>
         </div>
         <div className="mascot-stand">
-          <Mascot size={200} className={breakthrough ? 'cheer' : ''} />
+          <Mascot
+            size={200}
+            mood={breakthrough ? 'excited' : finished ? 'sad' : 'tense'}
+          />
         </div>
       </div>
     </div>
@@ -113,7 +116,7 @@ export function DecibelScene({ state, setBusy }: SceneProps) {
         <div className="ground-layer">
           <Gauge db={0} target={CONFIG.targetDb} />
           <div className="mascot-stand">
-            <Mascot size={220} />
+            <Mascot size={220} mood="idle" />
           </div>
         </div>
       </div>

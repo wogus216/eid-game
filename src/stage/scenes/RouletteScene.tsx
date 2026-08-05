@@ -98,7 +98,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
           ))}
         </div>
         <div className="mascot-stand">
-          <Mascot size={170} />
+          <Mascot size={170} mood={spinning ? 'nervous' : 'idle'} />
         </div>
       </div>
       {/* 구호 슬롯은 항상 렌더링해 레이아웃 점프를 막는다 */}

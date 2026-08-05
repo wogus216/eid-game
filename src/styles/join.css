@@ -60,12 +60,20 @@ body { overflow: auto; user-select: auto; }
   0% { transform: scale(0.6); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
-.mascot { filter: drop-shadow(0 10px 14px rgba(60, 90, 60, 0.3)); }
-.mascot.cheer { animation: cheer 0.5s ease-in-out infinite; }
-@keyframes cheer {
-  0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50% { transform: translateY(-24px) rotate(4deg); }
+.mascot {
+  filter: drop-shadow(0 10px 14px rgba(60, 90, 60, 0.3));
+  transform-origin: bottom center;
+}
+.mascot-wave { animation: join-bob 3s ease-in-out infinite; }
+@keyframes join-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-11px) rotate(2deg); }
+}
+.mascot-cheer { animation: join-cheer 0.5s ease-in-out infinite; }
+@keyframes join-cheer {
+  0%, 100% { transform: translateY(0) rotate(-4deg) scaleX(1.05) scaleY(0.96); }
+  50% { transform: translateY(-24px) rotate(4deg) scaleX(0.96) scaleY(1.05); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mascot.cheer { animation: none; }
+  .mascot-wave, .mascot-cheer { animation: none; }
 }

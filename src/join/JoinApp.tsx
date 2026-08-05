@@ -23,7 +23,7 @@ export function JoinApp() {
   if (submitted) {
     return (
       <div className="join success">
-        <Mascot size={180} className="cheer" />
+        <Mascot size={180} mood="cheer" />
         <h1 className="join-title">{CONFIG.copy.joinSuccess(name.trim())}</h1>
         <p className="join-sub">{CONFIG.copy.joinWelcome}</p>
       </div>
@@ -32,7 +32,7 @@ export function JoinApp() {
 
   return (
     <div className="join">
-      <Mascot size={160} />
+      <Mascot size={160} mood="wave" />
       <h1 className="join-title">{CONFIG.copy.joinTitle}</h1>
       <form onSubmit={submit} className={shake ? 'shake' : ''}>
         <input

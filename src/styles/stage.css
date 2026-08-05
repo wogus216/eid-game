@@ -71,17 +71,77 @@
   0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
   50% { transform: translateX(-50%) scale(0.84); opacity: 0.72; }
 }
-.mascot {
-  animation: float 3s ease-in-out infinite;
-}
+/* ── 꾸미의 감정 ───────────────────────────────────────────────
+   스쿼시(눌림)와 스트레치(늘어남)로 무게와 감정을 만든다.
+   변형 기준점은 발밑이어야 눌릴 때 바닥에 붙어 보인다. */
+.mascot { transform-origin: bottom center; }
+
+.mascot-idle { animation: float 3s ease-in-out infinite; }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-14px); }
 }
-.mascot.cheer { animation: cheer 0.5s ease-in-out infinite; }
+
+/* 대기 — 둥실거리다 가끔 손을 흔들고 두리번거린다 */
+.mascot-wave { animation: wave-idle 7s ease-in-out infinite; }
+@keyframes wave-idle {
+  0% { transform: translateY(0) rotate(0deg); }
+  9% { transform: translateY(-13px) rotate(0deg); }
+  20% { transform: translateY(0) rotate(0deg); }
+  44% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-9px) rotate(-10deg); }
+  56% { transform: translateY(-9px) rotate(8deg); }
+  62% { transform: translateY(-9px) rotate(-8deg); }
+  68% { transform: translateY(-9px) rotate(6deg); }
+  74% { transform: translateY(0) rotate(0deg); }
+  84% { transform: translateY(-5px) translateX(-11px) rotate(-5deg); }
+  92% { transform: translateY(-5px) translateX(11px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* 함성 중 — 아이들이 지르는 만큼 같이 들썩인다(--shout 연동) */
+.mascot-tense { animation: tense 0.26s ease-in-out infinite; }
+@keyframes tense {
+  0%, 100% {
+    transform: translateY(0)
+      scaleX(calc(1 + var(--shout, 0) * 0.06))
+      scaleY(calc(1 - var(--shout, 0) * 0.06));
+  }
+  50% {
+    transform: translateY(calc(var(--shout, 0) * -16px))
+      scaleX(calc(1 - var(--shout, 0) * 0.04))
+      scaleY(calc(1 + var(--shout, 0) * 0.04));
+  }
+}
+
+/* 추첨 대기 — 두근거리며 떠는 긴장(함성과 무관하므로 고정 폭) */
+.mascot-nervous { animation: nervous 0.34s ease-in-out infinite; }
+@keyframes nervous {
+  0%, 100% { transform: translateY(0) rotate(-2deg) scaleX(1.02) scaleY(0.98); }
+  50% { transform: translateY(-7px) rotate(2deg) scaleX(0.99) scaleY(1.02); }
+}
+
+/* 실패 — 축 처져 내려앉는다 */
+.mascot-sad { animation: sad-droop 2.4s ease-in-out infinite; }
+@keyframes sad-droop {
+  0%, 100% { transform: translateY(12px) rotate(-7deg) scaleX(1.04) scaleY(0.95); }
+  50% { transform: translateY(16px) rotate(-9deg) scaleX(1.06) scaleY(0.93); }
+}
+
+/* 돌파 — 눌렸다가 튀어오르며 몸을 비튼다 */
+.mascot-excited { animation: excited-jump 0.62s cubic-bezier(0.3, 0, 0.4, 1) infinite; }
+@keyframes excited-jump {
+  0% { transform: translateY(0) rotate(0deg) scaleX(1.14) scaleY(0.86); }
+  32% { transform: translateY(-48px) rotate(-9deg) scaleX(0.9) scaleY(1.13); }
+  58% { transform: translateY(-56px) rotate(9deg) scaleX(0.96) scaleY(1.05); }
+  86% { transform: translateY(0) rotate(0deg) scaleX(1.14) scaleY(0.86); }
+  100% { transform: translateY(0) rotate(0deg) scaleX(1) scaleY(1); }
+}
+
+.mascot-cheer { animation: cheer 0.5s ease-in-out infinite; }
 @keyframes cheer {
-  0%, 100% { transform: translateY(0) rotate(-4deg); }
-  50% { transform: translateY(-24px) rotate(4deg); }
+  0%, 100% { transform: translateY(0) rotate(-4deg) scaleX(1.05) scaleY(0.96); }
+  50% { transform: translateY(-26px) rotate(4deg) scaleX(0.96) scaleY(1.05); }
 }
 
 /* 떨어지는 벚꽃잎 */
@@ -644,6 +704,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mascot, .mascot.cheer, .petal, .rays, .firework, .wheel.spinning,
+  .mascot-idle, .mascot-wave, .mascot-tense, .mascot-nervous,
+  .mascot-sad, .mascot-cheer, .mascot-excited,
+  .petal, .rays, .firework, .wheel.spinning,
   .result-title, .result-card::after, .chant, .mascot-stand::after { animation: none; }
 }
