@@ -156,6 +156,48 @@ body::after {
   100% { transform: rotate(0deg); }
 }
 
+/* ── 긴장 에스컬레이션 ─────────────────────────────────────────
+   시도가 거듭될수록 --tension이 오른다. 하늘 물듦은 오브젝트 '아래'에,
+   비네트는 '위에' 깔린다 — 그래야 게이지와 꾸미만 밝게 남아
+   스포트라이트처럼 읽힌다. */
+.tension-sky {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    rgba(58, 70, 120, 0.92) 0%,
+    rgba(120, 96, 150, 0.72) 38%,
+    rgba(206, 130, 122, 0.5) 62%,
+    rgba(70, 88, 60, 0.42) 100%
+  );
+  opacity: calc(var(--tension, 0) * 0.8);
+  transition: opacity 900ms ease;
+  pointer-events: none;
+}
+.tension-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse 78% 86% at 50% 44%, transparent 38%, rgba(16, 20, 42, 0.62) 100%);
+  opacity: var(--tension, 0);
+  transition: opacity 900ms ease;
+  pointer-events: none;
+  z-index: 4;
+}
+/* 돌파 — 조여든 세계가 한꺼번에 밝아진다(아이 청중을 고려해 과하지 않게) */
+.flash-layer {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 46%, #fffaf0, #ffeec4 55%, rgba(255, 238, 196, 0));
+  opacity: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+:root.flash .flash-layer { animation: flash-burst 0.8s ease-out; }
+@keyframes flash-burst {
+  0% { opacity: 0; }
+  14% { opacity: 0.58; }
+  100% { opacity: 0; }
+}
+
 .scene {
   height: 100%;
 }
@@ -165,7 +207,8 @@ body::after {
   :root.shouting .sway-x,
   :root.shouting .sway-item,
   :root.quake .sway-x,
-  :root.quake .sway-item { animation: none; }
+  :root.quake .sway-item,
+  :root.flash .flash-layer { animation: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   body::after { animation: none; }

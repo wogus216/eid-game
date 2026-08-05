@@ -4,7 +4,7 @@ import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
 import { useDecibelAnim } from '../useDecibelAnim'
 import { sfx } from '../../audio/sfx'
-import { setShout, quake } from '../shout'
+import { setShout, setTension, quake, flash } from '../shout'
 import type { SceneProps } from '../App'
 
 function Gauge({ db, target, burst = false }: { db: number; target: number; burst?: boolean }) {
@@ -50,9 +50,12 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
     setBusy(true)
     setFinished(false)
     sfx.riseStart() // 함성이 커지는 지속음 — 게이지와 같이 자란다
+    // 1차 0 → 2차 0.5 → 3차 1. 시도가 거듭될수록 세계가 조여든다.
+    setTension(index / Math.max(1, CONFIG.attempts.length - 1))
     return () => {
       sfx.riseStop()
       setShout(0)
+      setTension(0)
     }
   }, [index, setBusy])
   const db = useDecibelAnim(index, spec.peakDb, () => {
@@ -61,7 +64,9 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
     sfx.riseStop()
     if (spec.success) {
       sfx.breakthrough()
-      quake() // 돌파 순간 세계가 한 번 크게 휜다
+      quake() // 세계가 한 번 크게 휜다
+      flash() // 조여든 어둠이 한꺼번에 밝아진다
+      setTension(0)
     } else {
       sfx.fail()
     }

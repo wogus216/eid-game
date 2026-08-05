@@ -145,6 +145,8 @@ export function App() {
     <div className="world">
       <Scenery />
       <Ground />
+      {/* 하늘 물듦은 오브젝트 아래 — 게이지와 꾸미는 물들지 않는다 */}
+      <div className="tension-sky" aria-hidden />
       <div className="petals" aria-hidden>
         {Array.from({ length: 10 }, (_, i) => (
           <span
@@ -164,6 +166,9 @@ export function App() {
       >
         {scenes[state.scene]}
       </div>
+      {/* 비네트와 섬광은 오브젝트 위 — 주변을 눌러 시선을 모은다 */}
+      <div className="tension-vignette" aria-hidden />
+      <div className="flash-layer" aria-hidden />
       {cue && !busyUi && !escHolding && (
         <div className="cue-chip">
           {CONFIG.copy.cuePrefix} {cue}
