@@ -22,21 +22,21 @@ export function Scenery() {
       preserveAspectRatio="xMidYMax slice"
       aria-hidden
     >
-      {/* 먼 언덕 2겹 */}
+      {/* 먼 언덕 2겹 — 대기원근으로 하늘색이 섞인 옅은 톤 */}
       <path
         d="M0 240 L0 168 Q180 118 380 156 Q560 190 760 142 Q980 92 1200 148 Q1400 196 1600 150 L1600 240 Z"
-        fill="#b7dcb0"
+        fill="#cfe7cb"
       />
       <path
         d="M0 240 L0 196 Q220 160 420 192 Q640 226 860 186 Q1080 146 1300 190 Q1460 220 1600 194 L1600 240 Z"
-        fill="#a4d195"
+        fill="#bcdfb2"
       />
       {TREES.map((t, i) => {
-        const canopy = t.blossom ? '#f3c4d3' : '#8fc57e'
-        const canopyLit = t.blossom ? '#f9d8e2' : '#a3d290'
+        const canopy = t.blossom ? '#efd3dc' : '#aad3a1'
+        const canopyLit = t.blossom ? '#f7e3ea' : '#bbdfb2'
         return (
-          <g key={i} transform={`translate(${t.x} 232) scale(${t.s})`}>
-            <rect x="-7" y="-38" width="14" height="40" rx="6" fill="#a58a6d" />
+          <g key={i} transform={`translate(${t.x} 232) scale(${t.s * 0.82})`}>
+            <rect x="-7" y="-38" width="14" height="40" rx="6" fill="#bcae9c" />
             <circle cx="-24" cy="-50" r="24" fill={canopy} />
             <circle cx="24" cy="-50" r="24" fill={canopy} />
             <circle cx="0" cy="-66" r="30" fill={canopyLit} />

@@ -37,6 +37,7 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
             style={{ '--i': i } as CSSProperties}
           >
             <div className="result-card">
+              <span className="card-rank">{i + 1}</span>
               {n}
               <span className="result-card-label">번</span>
             </div>

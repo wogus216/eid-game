@@ -3,6 +3,7 @@ import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState, type ShowActio
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { Scenery } from '../components/Scenery'
+import { Ground } from '../components/Ground'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
 import { RouletteScene } from './scenes/RouletteScene'
@@ -135,6 +136,7 @@ export function App() {
   return (
     <>
       <Scenery />
+      <Ground />
       <div className="petals" aria-hidden>
         {Array.from({ length: 10 }, (_, i) => (
           <span
