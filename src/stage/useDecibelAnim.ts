@@ -9,8 +9,16 @@ const KEYFRAMES = [
   { t: 1, v: 1 },
 ]
 const DURATION_MS = 3200
+// 준비 단계의 숨소리 — 화면이 죽어 보이지 않을 만큼만, 절대 오르지는 않게
+const IDLE_DB = 1.5
+const IDLE_SWING = 1.5
 
-export function useDecibelAnim(attemptKey: number, peakDb: number, onDone: () => void) {
+export function useDecibelAnim(
+  attemptKey: number,
+  peakDb: number,
+  running: boolean,
+  onDone: () => void,
+) {
   const [db, setDb] = useState(0)
   const doneRef = useRef(onDone)
   doneRef.current = onDone
@@ -19,6 +27,12 @@ export function useDecibelAnim(attemptKey: number, peakDb: number, onDone: () =>
     let raf = 0
     const start = performance.now()
     const tick = (now: number) => {
+      // 준비 단계 — 운영자가 Enter를 누를 때까지 바닥에서 떨기만 한다
+      if (!running) {
+        setDb(Math.max(0, IDLE_DB + Math.sin(now / 620) * IDLE_SWING))
+        raf = requestAnimationFrame(tick)
+        return
+      }
       const t = Math.min(1, (now - start) / DURATION_MS)
       let base = peakDb
       for (let i = 1; i < KEYFRAMES.length; i++) {
@@ -39,7 +53,7 @@ export function useDecibelAnim(attemptKey: number, peakDb: number, onDone: () =>
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [attemptKey, peakDb])
+  }, [attemptKey, peakDb, running])
 
   return db
 }

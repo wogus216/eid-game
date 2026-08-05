@@ -1,5 +1,13 @@
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
-import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState, type ShowAction } from '../state/showMachine'
+import {
+  reduce,
+  initialState,
+  DECIBEL_LAST_STEP,
+  attemptIndexOf,
+  isRunningStep,
+  type ShowState,
+  type ShowAction,
+} from '../state/showMachine'
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
 import { Scenery } from '../components/Scenery'
@@ -24,10 +32,14 @@ function nextCue(s: ShowState): string | null {
   switch (s.scene) {
     case 'standby':
       return CONFIG.copy.cue.standby
-    case 'decibel':
-      return s.step < DECIBEL_LAST_STEP
-        ? CONFIG.copy.cue.attempt(s.step + 1)
-        : CONFIG.copy.cue.toRoulette
+    case 'decibel': {
+      if (s.step === DECIBEL_LAST_STEP) return CONFIG.copy.cue.toRoulette
+      const next = s.step + 1
+      const n = attemptIndexOf(next) + 1
+      return isRunningStep(next)
+        ? CONFIG.copy.cue.attemptStart(n)
+        : CONFIG.copy.cue.attemptReady(n)
+    }
     case 'roulette':
       return s.winners.length < CONFIG.winnerCount
         ? CONFIG.copy.cue.draw(s.winners.length + 1)
@@ -165,7 +177,13 @@ export function App() {
         ))}
       </div>
       <div
-        key={state.scene === 'decibel' ? `decibel-${state.step}` : state.scene}
+        key={
+          state.scene === 'decibel'
+            ? state.step === 0
+              ? 'decibel-intro'
+              : `decibel-a${attemptIndexOf(state.step)}`
+            : state.scene
+        }
         className="scene-fade"
       >
         {scenes[state.scene]}

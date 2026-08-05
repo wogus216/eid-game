@@ -4,6 +4,7 @@ import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
 import { SpeechBubble } from '../../components/SpeechBubble'
 import { useDecibelAnim } from '../useDecibelAnim'
+import { attemptIndexOf, isRunningStep } from '../../state/showMachine'
 import { sfx } from '../../audio/sfx'
 import { setShout, setTension, quake, flash } from '../shout'
 import type { SceneProps } from '../App'
@@ -44,22 +45,31 @@ function AttemptDots({ index, finished }: { index: number; finished: boolean }) 
   )
 }
 
-function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => void }) {
+function Attempt({
+  index,
+  running,
+  setBusy,
+}: {
+  index: number
+  running: boolean
+  setBusy: (b: boolean) => void
+}) {
   const spec = CONFIG.attempts[index]
   const [finished, setFinished] = useState(false)
   useEffect(() => {
-    setBusy(true)
+    // 준비 단계에서는 진행을 막지 않는다 — 운영자가 Enter로 함성을 시작해야 한다
+    setBusy(running)
     setFinished(false)
-    sfx.riseStart() // 함성이 커지는 지속음 — 게이지와 같이 자란다
     // 1차 0 → 2차 0.5 → 3차 1. 시도가 거듭될수록 세계가 조여든다.
     setTension(index / Math.max(1, CONFIG.attempts.length - 1))
+    if (running) sfx.riseStart() // 함성이 커지는 지속음 — 게이지와 같이 자란다
     return () => {
       sfx.riseStop()
       setShout(0)
       setTension(0)
     }
-  }, [index, setBusy])
-  const db = useDecibelAnim(index, spec.peakDb, () => {
+  }, [index, running, setBusy])
+  const db = useDecibelAnim(index, spec.peakDb, running, () => {
     setFinished(true)
     setBusy(false)
     sfx.riseStop()
@@ -72,11 +82,12 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
       sfx.fail()
     }
   })
-  // 소리와 세계의 반응은 같은 값을 본다. 시도가 끝나면 바람이 잦아든다.
+  // 소리와 세계의 반응은 같은 값을 본다. 준비 단계에서는 바람도 일지 않는다.
   useEffect(() => {
+    if (!running) return
     sfx.riseLevel(db / 110)
     setShout(finished ? 0 : db / 110)
-  }, [db, finished])
+  }, [db, finished, running])
   const breakthrough = finished && spec.success
   return (
     <div className={`scene ${breakthrough ? 'breakthrough' : ''}`}>
@@ -119,5 +130,11 @@ export function DecibelScene({ state, setBusy }: SceneProps) {
       </div>
     )
   }
-  return <Attempt index={state.step - 1} setBusy={setBusy} />
+  return (
+    <Attempt
+      index={attemptIndexOf(state.step)}
+      running={isRunningStep(state.step)}
+      setBusy={setBusy}
+    />
+  )
 }

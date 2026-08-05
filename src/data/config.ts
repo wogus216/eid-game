@@ -32,7 +32,8 @@ export const CONFIG = {
     cuePrefix: 'Enter ▶',
     cue: {
       standby: '데시벨 게임 시작',
-      attempt: (n: number) => `${n}차 시도`,
+      attemptReady: (n: number) => `${n}차 준비`,
+      attemptStart: (n: number) => `${n}차 함성 시작!`,
       toRoulette: '돌림판으로',
       draw: (n: number) => `${n}번째 추첨`,
       toResult: '결과 발표',
