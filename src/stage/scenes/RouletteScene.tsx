@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
+import { SpeechBubble } from '../../components/SpeechBubble'
 import { sfx } from '../../audio/sfx'
 import type { SceneProps } from '../App'
 
@@ -62,7 +63,7 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
   return (
     <div className="scene">
       <div className="sky-layer">
-        <h1 className="scene-title">{CONFIG.copy.rouletteTitle}</h1>
+        <SpeechBubble>{CONFIG.copy.rouletteTitle}</SpeechBubble>
       </div>
       <div className="ground-layer">
         <div className="grounded wheel-stand">

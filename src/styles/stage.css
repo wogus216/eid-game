@@ -15,7 +15,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.4rem;
+  /* 말풍선 꼬리(약 27px)가 아래 요소를 침범하지 않도록 여유를 둔다 */
+  gap: 2.6rem;
 }
 .ground-layer {
   position: absolute;
@@ -229,10 +230,10 @@
   50% { transform: scale(1.35); }
 }
 
-/* 크림색 말풍선 타이틀 */
+/* 꾸미의 말풍선 — 꼬리가 화자를 가리킨다 */
 .scene-title {
+  position: relative;
   font-size: 3.4rem;
-  font-weight: 900;
   color: var(--choco);
   background: var(--cream);
   padding: 1.1rem 2.6rem;
@@ -240,6 +241,31 @@
   border: 4px solid #fff;
   box-shadow: 0 8px 0 rgba(90, 70, 52, 0.12), 0 14px 30px rgba(90, 70, 52, 0.18);
 }
+/* 흰 테두리 삼각형 위에 크림 삼각형을 얹어 말풍선과 같은 테두리를 만든다 */
+.scene-title::before,
+.scene-title::after {
+  content: '';
+  position: absolute;
+  left: var(--tail-x, 50%);
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 17px solid transparent;
+  border-right: 17px solid transparent;
+}
+.scene-title::before {
+  bottom: -27px;
+  border-top: 28px solid #fff;
+}
+.scene-title::after {
+  bottom: -19px;
+  border-top: 21px solid var(--cream);
+  border-left-width: 13px;
+  border-right-width: 13px;
+}
+.tail-center { --tail-x: 50%; }
+.tail-right { --tail-x: 74%; }
+.tail-left { --tail-x: 26%; }
 
 /* 입장 인원 — 원목 팻말 */
 .entry-count {

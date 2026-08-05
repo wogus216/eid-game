@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
+import { SpeechBubble } from '../../components/SpeechBubble'
 import { sfx } from '../../audio/sfx'
 import type { SceneProps } from '../App'
 
@@ -39,7 +40,7 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
         />
       ))}
       <div className="sky-layer">
-        <h1 className="scene-title result-title">{CONFIG.copy.resultTitle}</h1>
+        <SpeechBubble className="result-title">{CONFIG.copy.resultTitle}</SpeechBubble>
       </div>
       <div className="ground-layer tight">
         {state.winners.map((n, i) => (

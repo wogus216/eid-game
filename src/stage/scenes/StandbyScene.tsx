@@ -1,12 +1,13 @@
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
+import { SpeechBubble } from '../../components/SpeechBubble'
 import type { SceneProps } from '../App'
 
 export function StandbyScene({ state }: SceneProps) {
   return (
     <div className="scene">
       <div className="sky-layer">
-        <h1 className="scene-title">{CONFIG.copy.standbyTitle}</h1>
+        <SpeechBubble tail="center">{CONFIG.copy.standbyTitle}</SpeechBubble>
       </div>
       <div className="ground-layer">
         <div className="mascot-stand">

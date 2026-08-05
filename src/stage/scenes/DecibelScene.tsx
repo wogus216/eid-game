@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { CONFIG } from '../../data/config'
 import { Mascot } from '../../components/Mascot'
 import { Confetti } from '../../components/Confetti'
+import { SpeechBubble } from '../../components/SpeechBubble'
 import { useDecibelAnim } from '../useDecibelAnim'
 import { sfx } from '../../audio/sfx'
 import { setShout, setTension, quake, flash } from '../shout'
@@ -76,21 +77,12 @@ function Attempt({ index, setBusy }: { index: number; setBusy: (b: boolean) => v
     sfx.riseLevel(db / 110)
     setShout(finished ? 0 : db / 110)
   }, [db, finished])
-  const isLastChance = index === CONFIG.attempts.length - 1
   const breakthrough = finished && spec.success
   return (
     <div className={`scene ${breakthrough ? 'breakthrough' : ''}`}>
       {breakthrough && <Confetti count={80} />}
       <div className="sky-layer">
-        <h1 className="scene-title">
-          {finished
-            ? spec.success
-              ? CONFIG.copy.decibelSuccess
-              : CONFIG.copy.decibelFail
-            : isLastChance
-              ? CONFIG.copy.decibelLastChance
-              : CONFIG.copy.decibelTitle}
-        </h1>
+        <SpeechBubble>{finished ? spec.done : spec.say}</SpeechBubble>
         <AttemptDots index={index} finished={finished} />
       </div>
       <div className="ground-layer">
@@ -115,7 +107,7 @@ export function DecibelScene({ state, setBusy }: SceneProps) {
     return (
       <div className="scene">
         <div className="sky-layer">
-          <h1 className="scene-title">{CONFIG.copy.decibelTitle}</h1>
+          <SpeechBubble>{CONFIG.copy.decibelIntro}</SpeechBubble>
           <AttemptDots index={-1} finished={false} />
         </div>
         <div className="ground-layer">
