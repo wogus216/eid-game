@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } 
 import { reduce, initialState, DECIBEL_LAST_STEP, type ShowState, type ShowAction } from '../state/showMachine'
 import { save, load, clear } from '../state/persistence'
 import { CONFIG } from '../data/config'
+import { Scenery } from '../components/Scenery'
 import { StandbyScene } from './scenes/StandbyScene'
 import { DecibelScene } from './scenes/DecibelScene'
 import { RouletteScene } from './scenes/RouletteScene'
@@ -133,6 +134,7 @@ export function App() {
 
   return (
     <>
+      <Scenery />
       <div className="petals" aria-hidden>
         {Array.from({ length: 10 }, (_, i) => (
           <span

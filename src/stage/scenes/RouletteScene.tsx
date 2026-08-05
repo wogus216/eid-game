@@ -58,23 +58,27 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
 
   return (
     <div className="scene">
-      <h1 className="scene-title">{CONFIG.copy.rouletteTitle}</h1>
-      <div className="roulette-row">
-        <div className={`wheel ${spinning ? 'spinning' : ''} ${almost ? 'almost' : ''}`}>
-          {Array.from({ length: 12 }, (_, i) => (
-            <div key={i} className="wheel-spoke" style={{ transform: `rotate(${i * 30}deg)` }} />
-          ))}
-          <div className="wheel-center">
-            {spinning ? (
-              <span className={`wheel-flick ${almost ? 'almost' : ''}`}>{flick ?? '?'}</span>
-            ) : showCard ? (
-              <span className="wheel-number">{current}</span>
-            ) : (
-              '?'
-            )}
+      <div className="sky-layer">
+        <h1 className="scene-title">{CONFIG.copy.rouletteTitle}</h1>
+      </div>
+      <div className="ground-layer">
+        <div className="grounded">
+          <div className={`wheel ${spinning ? 'spinning' : ''} ${almost ? 'almost' : ''}`}>
+            {Array.from({ length: 12 }, (_, i) => (
+              <div key={i} className="wheel-spoke" style={{ transform: `rotate(${i * 30}deg)` }} />
+            ))}
+            <div className="wheel-center">
+              {spinning ? (
+                <span className={`wheel-flick ${almost ? 'almost' : ''}`}>{flick ?? '?'}</span>
+              ) : showCard ? (
+                <span className="wheel-number">{current}</span>
+              ) : (
+                '?'
+              )}
+            </div>
           </div>
         </div>
-        <div className="winner-list">
+        <div className="winner-board grounded">
           {winners.slice(0, revealed).map((n, i) => (
             <div key={`${n}-${i}`} className="winner-chip">
               {i + 1}번째 · <strong>{n}번</strong>
@@ -86,7 +90,9 @@ export function RouletteScene({ state, setBusy }: SceneProps) {
             </div>
           ))}
         </div>
-        <Mascot size={180} />
+        <div className="mascot-stand">
+          <Mascot size={170} />
+        </div>
       </div>
       {/* 구호 슬롯은 항상 렌더링해 레이아웃 점프를 막는다 */}
       <div className={`chant ${spinning ? '' : 'hidden'} ${almost ? 'almost' : ''}`}>

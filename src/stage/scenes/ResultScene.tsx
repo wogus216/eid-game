@@ -8,14 +8,14 @@ import type { SceneProps } from '../App'
 const FIREWORKS = [
   { x: '12%', y: '22%', c: '#f2b23c', d: '0s' },
   { x: '86%', y: '18%', c: '#f39ab7', d: '0.6s' },
-  { x: '8%', y: '62%', c: '#57b8ff', d: '1.1s' },
-  { x: '90%', y: '58%', c: '#f2b23c', d: '1.7s' },
+  { x: '8%', y: '52%', c: '#57b8ff', d: '1.1s' },
+  { x: '90%', y: '48%', c: '#f2b23c', d: '1.7s' },
   { x: '50%', y: '12%', c: '#f39ab7', d: '2.3s' },
 ]
 
 export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () => void }) {
   return (
-    <div className="scene result">
+    <div className="scene">
       <div className="rays" aria-hidden />
       <Confetti count={120} />
       {FIREWORKS.map((f, i) => (
@@ -26,16 +26,26 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
           style={{ left: f.x, top: f.y, color: f.c, animationDelay: f.d }}
         />
       ))}
-      <h1 className="scene-title result-title">{CONFIG.copy.resultTitle}</h1>
-      <div className="result-numbers">
+      <div className="sky-layer">
+        <h1 className="scene-title result-title">{CONFIG.copy.resultTitle}</h1>
+      </div>
+      <div className="ground-layer tight">
         {state.winners.map((n, i) => (
-          <div key={`${n}-${i}`} className="result-card" style={{ '--i': i } as CSSProperties}>
-            {n}
-            <span className="result-card-label">번</span>
+          <div
+            key={`${n}-${i}`}
+            className="card-stand grounded"
+            style={{ '--i': i } as CSSProperties}
+          >
+            <div className="result-card">
+              {n}
+              <span className="result-card-label">번</span>
+            </div>
           </div>
         ))}
+        <div className="mascot-stand">
+          <Mascot size={190} className="cheer" />
+        </div>
       </div>
-      <Mascot size={210} className="cheer" />
       {onRestart && (
         <button type="button" className="restart-btn" onClick={onRestart}>
           {CONFIG.copy.restartButton}

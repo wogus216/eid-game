@@ -1,5 +1,77 @@
+/* ── 무대 레이아웃 ────────────────────────────────────────────
+   하늘 레이어(정보)와 지면 레이어(물체)를 분리한다.
+   지면 레이어의 밑변이 --ground(지면선)에 정확히 닿으므로,
+   그 안의 요소들은 잔디를 밟고 서 있는 것처럼 보인다.
+   태양은 좌상단 — 모든 접지 그림자는 우하단으로 치우친다. */
+.scene {
+  position: relative;
+  height: 100%;
+}
+.sky-layer {
+  position: absolute;
+  top: 5vh;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+}
+.ground-layer {
+  position: absolute;
+  top: var(--ground);
+  left: 0;
+  right: 0;
+  transform: translateY(-100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4rem;
+}
+.ground-layer > * { flex: 0 0 auto; }
+.ground-layer.tight { gap: 2.5rem; }
+
+/* 접지 그림자 — 물체 밑변에 깔리는 타원 */
+.grounded {
+  position: relative;
+}
+.grounded::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 55%;
+  transform: translateX(-50%);
+  width: 116%;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(48, 78, 42, 0.38), rgba(48, 78, 42, 0) 72%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* 마스코트 — 부유형이라 지면에서 살짝 띄우고 그림자는 호흡시킨다 */
+.mascot-stand {
+  position: relative;
+  padding-bottom: 4vh;
+}
+.mascot-stand::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 54%;
+  transform: translateX(-50%);
+  width: 58%;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(48, 78, 42, 0.32), rgba(48, 78, 42, 0) 70%);
+  animation: shadow-breathe 3s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes shadow-breathe {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50% { transform: translateX(-50%) scale(0.84); opacity: 0.72; }
+}
 .mascot {
-  filter: drop-shadow(0 14px 18px rgba(60, 90, 60, 0.3));
   animation: float 3s ease-in-out infinite;
 }
 @keyframes float {
@@ -67,10 +139,7 @@
 }
 
 /* 데시벨 시도 진행 도트 */
-.attempt-dots {
-  display: flex;
-  gap: 0.7rem;
-}
+.attempt-dots { display: flex; gap: 0.7rem; }
 .attempt-dots span {
   width: 16px;
   height: 16px;
@@ -136,20 +205,19 @@
   box-shadow: 0 10px 24px rgba(90, 70, 52, 0.3);
 }
 
-/* 데시벨 게이지 — 원목 프레임 + 크림 트랙 */
+/* ── 데시벨 게이지 ─────────────────────────────────────────── */
 .gauge {
   position: relative;
   width: 150px;
-  height: 55vh;
+  height: 44vh;
   border: 10px solid var(--wood);
   outline: 4px solid var(--wood-deep);
   border-radius: 26px;
   overflow: hidden;
   background: var(--cream);
-  box-shadow: inset 0 6px 14px rgba(90, 70, 52, 0.18), 0 14px 28px rgba(90, 70, 52, 0.22);
+  box-shadow: inset 0 6px 14px rgba(90, 70, 52, 0.18);
 }
 .gauge::before {
-  /* 눈금 */
   content: '';
   position: absolute;
   inset: 0;
@@ -178,7 +246,8 @@
   text-shadow: 0 1px 0 #fff;
   z-index: 1;
 }
-/* 돌파 — 게이지가 프레임을 뚫는 순간: 충격파 링 + 빛줄기 + 스파크 */
+
+/* 돌파 — 게이지가 프레임을 뚫는 순간 */
 .gauge-wrap { position: relative; }
 .gauge-burst {
   position: absolute;
@@ -189,7 +258,6 @@
   pointer-events: none;
 }
 .gauge-burst::before {
-  /* 충격파 링 */
   content: '';
   position: absolute;
   left: -70px;
@@ -205,13 +273,12 @@
   100% { transform: scale(2.1); opacity: 0; border-width: 2px; }
 }
 .gauge-burst::after {
-  /* 짧고 선명한 빛줄기 */
   content: '';
   position: absolute;
   left: -14px;
   bottom: 0;
   width: 28px;
-  height: 30vh;
+  height: 26vh;
   border-radius: 14px;
   background: linear-gradient(to top, #fff, var(--gold) 35%, rgba(242, 178, 60, 0));
   transform-origin: bottom;
@@ -220,7 +287,6 @@
 @keyframes beam-up {
   0% { transform: scaleY(0); opacity: 1; }
   45% { transform: scaleY(1.12); opacity: 1; }
-  /* 완전히 사라지지 않고 은은한 빛기둥으로 남아 "뚫린 상태"를 유지 */
   100% { transform: scaleY(1); opacity: 0.55; }
 }
 .spark {
@@ -259,26 +325,23 @@
   60% { transform: translate(-10px, 6px); }
   80% { transform: translate(8px, -4px); }
 }
-.breakthrough .gauge {
-  border-top-color: transparent;
-  outline-color: rgba(138, 90, 51, 0.35);
-}
+.breakthrough .gauge { border-top-color: transparent; }
 .breakthrough .gauge-fill {
   box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.35), 0 0 44px var(--gold);
 }
 
-.decibel-row { display: flex; align-items: center; gap: 4rem; }
+/* dB 숫자판 — 잔디에 박힌 나무 팻말 */
 .db-readout {
-  font-size: 7.5rem;
+  font-size: 7rem;
   font-weight: 900;
   min-width: 5ch;
   text-align: center;
   color: var(--choco);
   background: var(--cream);
-  border: 4px solid #fff;
-  border-radius: 36px;
-  padding: 0.8rem 1.8rem;
-  box-shadow: 0 10px 0 rgba(90, 70, 52, 0.12);
+  border: 6px solid var(--wood);
+  outline: 3px solid var(--wood-deep);
+  border-radius: 28px;
+  padding: 0.7rem 1.6rem;
   font-variant-numeric: tabular-nums;
 }
 .db-readout.success {
@@ -286,21 +349,18 @@
   border-color: var(--gold);
   text-shadow: 0 2px 0 #fff;
 }
-.db-unit { font-size: 2.6rem; opacity: 0.6; }
+.db-unit { font-size: 2.4rem; opacity: 0.6; }
 
-/* 돌림판 — 원목 룰렛 */
-.roulette-row { display: flex; align-items: center; gap: 5rem; }
-/* 칩 내용이 바뀌어도 행 전체가 재배치되지 않도록: 모든 열 폭 고정 + 축소 금지 */
-.roulette-row > * { flex: 0 0 auto; }
+/* ── 돌림판 ────────────────────────────────────────────────── */
 .wheel {
   position: relative;
-  width: 400px;
-  height: 400px;
+  width: 380px;
+  height: 380px;
   border-radius: 50%;
   border: 14px solid var(--wood);
   outline: 5px solid var(--wood-deep);
   background: radial-gradient(circle, var(--cream) 0%, var(--cream-deep) 75%);
-  box-shadow: 0 16px 32px rgba(90, 70, 52, 0.25), inset 0 0 0 6px #fff;
+  box-shadow: inset 0 0 0 6px #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,8 +375,8 @@
   background: linear-gradient(var(--wood) 0 44%, transparent 44%);
 }
 .wheel-center {
-  width: 210px;
-  height: 210px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background: #fff;
   border: 8px solid var(--blossom-deep);
@@ -324,7 +384,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 4.4rem;
+  font-size: 4.2rem;
   font-weight: 900;
   color: var(--choco);
   z-index: 1;
@@ -340,10 +400,40 @@
 .wheel-flick { color: var(--choco); opacity: 0.85; font-variant-numeric: tabular-nums; }
 .wheel-flick.almost { color: var(--tulip); opacity: 1; }
 
-/* 스핀 중 구호 — 화면 하단 고정(레이아웃 흐름 밖)이라 돌림판 위치에 영향 없음 */
+/* 당첨 목록 — 잔디에 세운 나무 게시판 */
+.winner-board {
+  width: 268px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.1rem;
+  background: var(--cream-deep);
+  border: 8px solid var(--wood);
+  outline: 3px solid var(--wood-deep);
+  border-radius: 20px;
+}
+.winner-chip {
+  padding: 0.7rem 1rem;
+  background: var(--cream);
+  border: 3px solid var(--wood);
+  border-radius: 12px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--choco);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.winner-chip.empty {
+  opacity: 0.42;
+  border-style: dashed;
+  background: transparent;
+}
+
+/* 스핀 중 구호 — 화면 하단 고정이라 돌림판 위치에 영향 없음 */
 .chant {
   position: fixed;
-  bottom: 6vh;
+  bottom: 5vh;
   left: 50%;
   font-size: 2.2rem;
   font-weight: 900;
@@ -362,42 +452,13 @@
   border-color: #ffd6c4;
   animation-duration: 0.32s;
 }
-.chant.hidden {
-  visibility: hidden;
-  animation: none;
-}
+.chant.hidden { visibility: hidden; animation: none; }
 @keyframes chant-bounce {
   0%, 100% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.07) rotate(-1deg); }
 }
-.winner-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 240px; /* 칩 내용과 무관한 고정 폭 */
-}
-.winner-chip {
-  padding: 0.8rem 1.2rem;
-  background: var(--cream);
-  border: 3px solid var(--wood);
-  border-radius: 14px;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--choco);
-  box-shadow: 0 5px 0 rgba(90, 70, 52, 0.12);
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.winner-chip.empty {
-  opacity: 0.45;
-  text-align: center;
-  border-style: dashed;
-  background: transparent;
-  box-shadow: none;
-}
 
-/* 결과 — 피날레 */
+/* ── 결과 피날레 ───────────────────────────────────────────── */
 .rays {
   position: fixed;
   left: 50%;
@@ -439,23 +500,7 @@
   0%, 100% { transform: rotate(-1.2deg) scale(1); }
   50% { transform: rotate(1.2deg) scale(1.04); }
 }
-.result-numbers { display: flex; gap: 2.5rem; }
-.result-card {
-  position: relative;
-  overflow: hidden;
-  width: 220px;
-  height: 260px;
-  border-radius: 28px;
-  background: var(--cream);
-  border: 6px solid var(--gold);
-  outline: 3px solid var(--wood);
-  box-shadow: 0 14px 0 rgba(90, 70, 52, 0.14), 0 0 44px rgba(242, 178, 60, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 6rem;
-  font-weight: 900;
-  color: var(--tulip);
+.card-stand {
   animation: card-in 0.7s cubic-bezier(0.2, 1.5, 0.4, 1) both;
   animation-delay: calc(var(--i, 0) * 0.22s);
 }
@@ -463,8 +508,24 @@
   0% { transform: translateY(60px) scale(0.4) rotate(-8deg); opacity: 0; }
   100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; }
 }
+.result-card {
+  position: relative;
+  overflow: hidden;
+  width: 212px;
+  height: 280px;
+  border-radius: 28px;
+  background: var(--cream);
+  border: 6px solid var(--gold);
+  outline: 3px solid var(--wood);
+  box-shadow: 0 0 44px rgba(242, 178, 60, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6rem;
+  font-weight: 900;
+  color: var(--tulip);
+}
 .result-card::before {
-  /* 카드 상단 금메달 */
   content: '';
   position: absolute;
   top: 14px;
@@ -477,7 +538,6 @@
   box-shadow: 0 3px 0 rgba(90, 70, 52, 0.18), inset 0 0 0 4px rgba(255, 255, 255, 0.5);
 }
 .result-card::after {
-  /* 반짝이 스윕 */
   content: '';
   position: absolute;
   inset: 0;
@@ -496,8 +556,12 @@
   0% { transform: translateX(-120%); }
   45%, 100% { transform: translateX(120%); }
 }
-.result-card-label { font-size: 2rem; color: var(--choco); align-self: flex-end; margin: 0 0 3.2rem 0.4rem; }
+.result-card-label { font-size: 2rem; color: var(--choco); align-self: flex-end; margin: 0 0 3.4rem 0.4rem; }
 .restart-btn {
+  position: fixed;
+  bottom: 4vh;
+  left: 50%;
+  transform: translateX(-50%);
   font-size: 1.4rem;
   font-weight: 800;
   font-family: inherit;
@@ -512,7 +576,7 @@
 }
 .restart-btn:hover { background: #fffbef; }
 .restart-btn:active {
-  transform: translateY(4px);
+  transform: translateX(-50%) translateY(4px);
   box-shadow: 0 2px 0 var(--wood-deep);
 }
 
@@ -531,5 +595,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mascot, .mascot.cheer, .petal, .rays, .firework,
-  .result-title, .result-card::after, .chant { animation: none; }
+  .result-title, .result-card::after, .chant, .mascot-stand::after { animation: none; }
 }
