@@ -109,6 +109,23 @@ describe('roulette', () => {
   })
 })
 
+describe('RESTART', () => {
+  it('returns to standby keeping entryCount, clearing winners and history', () => {
+    const s: ShowState = {
+      scene: 'result',
+      step: 0,
+      entryCount: 87,
+      winners: [1, 2, 3, 4],
+      drawnHistory: [1, 2, 3, 4, 5],
+    }
+    const next = reduce(s, { type: 'RESTART' })
+    expect(next.scene).toBe('standby')
+    expect(next.entryCount).toBe(87)
+    expect(next.winners).toEqual([])
+    expect(next.drawnHistory).toEqual([])
+  })
+})
+
 describe('BACK', () => {
   it('keeps winners when going back from roulette', () => {
     let s = advanceTo('roulette')

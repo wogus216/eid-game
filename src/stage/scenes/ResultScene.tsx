@@ -13,7 +13,7 @@ const FIREWORKS = [
   { x: '50%', y: '12%', c: '#f39ab7', d: '2.3s' },
 ]
 
-export function ResultScene({ state }: SceneProps) {
+export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () => void }) {
   return (
     <div className="scene result">
       <div className="rays" aria-hidden />
@@ -36,6 +36,11 @@ export function ResultScene({ state }: SceneProps) {
         ))}
       </div>
       <Mascot size={210} className="cheer" />
+      {onRestart && (
+        <button type="button" className="restart-btn" onClick={onRestart}>
+          {CONFIG.copy.restartButton}
+        </button>
+      )}
     </div>
   )
 }

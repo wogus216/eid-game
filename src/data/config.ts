@@ -27,6 +27,7 @@ export const CONFIG = {
     joinButton: '로그인',
     escHoldHint: '초기화하려면 Esc를 계속 누르세요…',
     entryCountLabel: (n: number) => `입장 ${n}명`,
+    restartButton: '다시하기',
     cuePrefix: 'Enter ▶',
     cue: {
       standby: '데시벨 게임 시작',

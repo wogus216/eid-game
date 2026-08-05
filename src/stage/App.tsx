@@ -128,7 +128,7 @@ export function App() {
     standby: <StandbyScene state={state} setBusy={setBusy} />,
     decibel: <DecibelScene state={state} setBusy={setBusy} />,
     roulette: <RouletteScene state={state} setBusy={setBusy} />,
-    result: <ResultScene state={state} setBusy={setBusy} />,
+    result: <ResultScene state={state} setBusy={setBusy} onRestart={() => dispatch({ type: 'RESTART' })} />,
   }
 
   return (

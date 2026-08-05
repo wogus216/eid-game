@@ -497,6 +497,24 @@
   45%, 100% { transform: translateX(120%); }
 }
 .result-card-label { font-size: 2rem; color: var(--choco); align-self: flex-end; margin: 0 0 3.2rem 0.4rem; }
+.restart-btn {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: inherit;
+  color: var(--choco);
+  background: var(--cream);
+  border: 4px solid var(--wood);
+  border-radius: 999px;
+  padding: 0.7rem 2.4rem;
+  cursor: pointer;
+  box-shadow: 0 6px 0 var(--wood-deep);
+  z-index: 5;
+}
+.restart-btn:hover { background: #fffbef; }
+.restart-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--wood-deep);
+}
 
 .confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
 .confetti-piece {

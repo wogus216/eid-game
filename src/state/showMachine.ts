@@ -17,6 +17,7 @@ export type ShowAction =
   | { type: 'ADJUST_ENTRY'; delta: number }
   | { type: 'REDRAW_LAST' }
   | { type: 'RESET' }
+  | { type: 'RESTART' }
 
 export const DECIBEL_LAST_STEP = CONFIG.attempts.length // step 0=인트로, 1..N=시도
 
@@ -42,6 +43,10 @@ export function reduce(
   switch (action.type) {
     case 'RESET':
       return initialState
+
+    case 'RESTART':
+      // 다시하기: 입장 인원은 유지한 채 처음(대기)으로
+      return { ...initialState, entryCount: state.entryCount }
 
     case 'ADJUST_ENTRY': {
       if (state.scene !== 'standby') return state
