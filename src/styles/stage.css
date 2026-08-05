@@ -198,6 +198,26 @@
 @keyframes cue-in {
   from { opacity: 0; transform: translateY(6px); }
 }
+/* 재추첨 — 큐 칩의 거울상. 사회자가 마우스로 누를 수 있는 유일한 운영 버튼 */
+.redraw-btn {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--choco);
+  background: rgba(255, 246, 221, 0.92);
+  border: 2px solid rgba(176, 124, 76, 0.5);
+  border-radius: 10px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  animation: cue-in 0.35s ease-out;
+  z-index: 5;
+}
+.redraw-btn:hover { background: rgba(255, 252, 240, 0.98); }
+.redraw-btn:active { transform: translateY(1px); }
+
 .muted-chip {
   position: fixed;
   left: 1.2rem;

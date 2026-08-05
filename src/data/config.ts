@@ -33,6 +33,7 @@ export const CONFIG = {
     escHoldHint: '초기화하려면 Esc를 계속 누르세요…',
     entryCountLabel: (n: number) => `입장 ${n}명`,
     restartButton: '다시하기',
+    redrawButton: '다시 뽑기',
     mutedHint: '소리 꺼짐 · M',
     cuePrefix: 'Enter ▶',
     cue: {

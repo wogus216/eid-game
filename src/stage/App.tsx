@@ -6,6 +6,7 @@ import {
   attemptIndexOf,
   isRunningStep,
   roundStartOf,
+  canRedraw,
   type ShowState,
   type ShowAction,
 } from '../state/showMachine'
@@ -199,6 +200,22 @@ export function App() {
         <div className="cue-chip">
           {CONFIG.copy.cuePrefix} {cue}
         </div>
+      )}
+      {canRedraw(state) && !busyUi && !escHolding && (
+        <button
+          type="button"
+          className="redraw-btn"
+          // window pointerdown 핸들러가 터치 탭을 NEXT로 해석한다 — 여기서 끊지 않으면
+          // 터치로 누를 때 재추첨과 다음 추첨이 함께 나간다
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            // 포커스가 남으면 다음 Enter가 진행이 아니라 이 버튼을 다시 누른다
+            e.currentTarget.blur()
+            dispatch({ type: 'REDRAW_LAST' })
+          }}
+        >
+          {CONFIG.copy.redrawButton}
+        </button>
       )}
       {muted && <div className="muted-chip">{CONFIG.copy.mutedHint}</div>}
       {escHolding && (
