@@ -8,30 +8,40 @@ const BANDS = [
   { top: 70, height: 32, size: 96, opacity: 0.82 },
 ]
 
+// 전경은 자연스러워야 하므로 간격·크기·높이를 일부러 불규칙하게 흩뿌린다.
+// y가 클수록(=화면 아래) 가까우므로 크게, 작을수록 멀리 있어 작다.
 const TUFTS = [
-  { x: 60, s: 1.0 },
-  { x: 250, s: 0.78 },
-  { x: 430, s: 1.12 },
-  { x: 700, s: 0.86 },
-  { x: 960, s: 1.05 },
-  { x: 1180, s: 0.8 },
-  { x: 1400, s: 1.15 },
-  { x: 1550, s: 0.9 },
+  { x: 40, y: 252, s: 1.35 },
+  { x: 175, y: 232, s: 0.72 },
+  { x: 232, y: 244, s: 1.0 },
+  { x: 470, y: 226, s: 0.62 },
+  { x: 596, y: 256, s: 1.42 },
+  { x: 742, y: 236, s: 0.86 },
+  { x: 900, y: 228, s: 0.66 },
+  { x: 1044, y: 250, s: 1.22 },
+  { x: 1096, y: 234, s: 0.8 },
+  { x: 1288, y: 258, s: 1.45 },
+  { x: 1452, y: 230, s: 0.7 },
+  { x: 1566, y: 246, s: 1.08 },
 ]
 
 const FLOWERS = [
-  { x: 150, y: 214, s: 1.0, c: '#ff9ab5' },
-  { x: 340, y: 226, s: 1.2, c: '#fff0f4' },
-  { x: 560, y: 208, s: 0.9, c: '#ffd166' },
-  { x: 840, y: 224, s: 1.15, c: '#ff9ab5' },
-  { x: 1080, y: 210, s: 0.95, c: '#fff0f4' },
-  { x: 1300, y: 228, s: 1.1, c: '#ffd166' },
-  { x: 1500, y: 212, s: 0.88, c: '#ff9ab5' },
+  { x: 108, y: 236, s: 1.28, c: '#ff9ab5' },
+  { x: 300, y: 196, s: 0.62, c: '#fff0f4' },
+  { x: 356, y: 250, s: 1.42, c: '#ffd166' },
+  { x: 528, y: 204, s: 0.7, c: '#ff9ab5' },
+  { x: 680, y: 244, s: 1.2, c: '#fff0f4' },
+  { x: 812, y: 192, s: 0.58, c: '#ffd166' },
+  { x: 968, y: 258, s: 1.5, c: '#ff9ab5' },
+  { x: 1160, y: 200, s: 0.66, c: '#fff0f4' },
+  { x: 1232, y: 240, s: 1.15, c: '#ffd166' },
+  { x: 1404, y: 254, s: 1.36, c: '#fff0f4' },
+  { x: 1528, y: 198, s: 0.64, c: '#ff9ab5' },
 ]
 
-function Tuft({ x, s }: { x: number; s: number }) {
+function Tuft({ x, y, s }: { x: number; y: number; s: number }) {
   return (
-    <g transform={`translate(${x} 236) scale(${s})`} stroke="#4e9b3b" strokeWidth="9" fill="none" strokeLinecap="round">
+    <g transform={`translate(${x} ${y}) scale(${s})`} stroke="#4e9b3b" strokeWidth="9" fill="none" strokeLinecap="round">
       <path d="M0 0 Q -8 -32 -26 -54" />
       <path d="M0 0 Q -3 -40 -10 -72" stroke="#5cae46" />
       <path d="M0 0 Q 4 -44 7 -78" />

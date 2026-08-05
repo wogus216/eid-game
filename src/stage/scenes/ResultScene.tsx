@@ -38,8 +38,10 @@ export function ResultScene({ state, onRestart }: SceneProps & { onRestart?: () 
           >
             <div className="result-card">
               <span className="card-rank">{i + 1}</span>
-              {n}
-              <span className="result-card-label">번</span>
+              <span className="card-num">
+                {n}
+                <span className="result-card-label">번</span>
+              </span>
             </div>
           </div>
         ))}

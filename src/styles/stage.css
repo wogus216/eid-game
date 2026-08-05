@@ -519,21 +519,23 @@
   outline: 3px solid var(--wood);
   box-shadow: 0 0 44px rgba(242, 178, 60, 0.35);
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  gap: 1.6rem;
+}
+.card-num {
+  display: flex;
+  align-items: baseline;
   gap: 0.15rem;
-  padding-top: 2.6rem;
   font-size: 6rem;
   font-weight: 900;
+  line-height: 1;
   color: var(--tulip);
   font-variant-numeric: tabular-nums;
 }
 /* 순번 배지 — 장식이 아니라 '몇 번째 당첨자'라는 정보 */
 .card-rank {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
   width: 46px;
   height: 46px;
   border-radius: 50%;
