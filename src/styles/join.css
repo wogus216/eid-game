@@ -3,17 +3,22 @@ body { overflow: auto; user-select: auto; }
    좁은 모바일 화면에서는 그대로 쓰면 뭉치가 한쪽에 몰려 보이므로, 참가
    화면에서는 vw 단위로 화면 전체에 고르게 흩어지도록 다시 배치한다. */
 body::after {
-  top: 7vh;
-  left: 4vw;
-  width: 100px;
-  height: 32px;
+  top: 6vh;
+  left: 2vw;
+  width: 86px;
+  height: 28px;
   box-shadow:
-    32px -16px 0 8px rgba(255, 255, 255, 0.92),
-    66px 3px 0 2px rgba(255, 255, 255, 0.88),
-    26vw 5vh 0 10px rgba(255, 255, 255, 0.82),
-    46vw -3vh 0 6px rgba(255, 255, 255, 0.78),
-    68vw 6vh 0 12px rgba(255, 255, 255, 0.8),
-    88vw -2vh 0 6px rgba(255, 255, 255, 0.72);
+    28px -14px 0 6px rgba(255, 255, 255, 0.9),
+    16vw 9vh 0 8px rgba(255, 255, 255, 0.85),
+    24vw 1vh 0 4px rgba(255, 255, 255, 0.8),
+    34vw -3vh 0 10px rgba(255, 255, 255, 0.82),
+    40vw 6vh 0 6px rgba(255, 255, 255, 0.78),
+    50vw 8vh 0 6px rgba(255, 255, 255, 0.85),
+    56vw -2vh 0 10px rgba(255, 255, 255, 0.8),
+    66vw -4vh 0 8px rgba(255, 255, 255, 0.82),
+    72vw 5vh 0 4px rgba(255, 255, 255, 0.75),
+    84vw 7vh 0 6px rgba(255, 255, 255, 0.8),
+    90vw -3vh 0 10px rgba(255, 255, 255, 0.72);
 }
 .join {
   min-height: 100vh;
