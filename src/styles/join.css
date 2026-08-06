@@ -1,13 +1,19 @@
 body { overflow: auto; user-select: auto; }
 /* base.css의 구름은 1920px 무대 화면 기준으로 두 뭉치(근경 + 원경)를 배치한다.
-   좁은 모바일 화면에서는 원경 뭉치가 오른쪽 끝에 몰려 한쪽으로 치우쳐 보이므로,
-   참가 화면에서는 뭉치 하나만 남기고 화면 중앙에 오도록 다시 배치한다. */
+   좁은 모바일 화면에서는 그대로 쓰면 뭉치가 한쪽에 몰려 보이므로, 참가
+   화면에서는 vw 단위로 화면 전체에 고르게 흩어지도록 다시 배치한다. */
 body::after {
-  left: 50%;
-  margin-left: -120px;
+  top: 7vh;
+  left: 4vw;
+  width: 100px;
+  height: 32px;
   box-shadow:
-    46px -20px 0 10px rgba(255, 255, 255, 0.92),
-    96px 2px 0 2px rgba(255, 255, 255, 0.92);
+    32px -16px 0 8px rgba(255, 255, 255, 0.92),
+    66px 3px 0 2px rgba(255, 255, 255, 0.88),
+    26vw 5vh 0 10px rgba(255, 255, 255, 0.82),
+    46vw -3vh 0 6px rgba(255, 255, 255, 0.78),
+    68vw 6vh 0 12px rgba(255, 255, 255, 0.8),
+    88vw -2vh 0 6px rgba(255, 255, 255, 0.72);
 }
 .join {
   min-height: 100vh;
