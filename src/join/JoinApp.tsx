@@ -1,13 +1,36 @@
 import { useState } from 'react'
 import { CONFIG } from '../data/config'
 import { Mascot } from '../components/Mascot'
+import { useIdleDecibelLoop } from './useIdleDecibelLoop'
 import '../styles/tokens.css'
 import '../styles/base.css'
 import '../styles/join.css'
 
+type Stage = 'form' | 'success' | 'decibel'
+
+function JoinDecibel() {
+  const db = useIdleDecibelLoop()
+  const [tense, setTense] = useState(false)
+  if (!tense && db >= 68) setTense(true)
+  if (tense && db <= 62) setTense(false)
+
+  return (
+    <div className="join join-decibel">
+      <h1 className="join-title">{CONFIG.copy.joinDecibelTitle}</h1>
+      <div className="decibel-row">
+        <Mascot size={140} mood={tense ? 'tense' : 'idle'} />
+        <div className="decibel-readout">
+          {Math.round(db)}
+          <span className="decibel-unit">dB</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function JoinApp() {
+  const [stage, setStage] = useState<Stage>('form')
   const [name, setName] = useState('')
-  const [submitted, setSubmitted] = useState(false)
   const [shake, setShake] = useState(false)
 
   const submit = (e: React.FormEvent) => {
@@ -17,15 +40,22 @@ export function JoinApp() {
       setTimeout(() => setShake(false), 500)
       return
     }
-    setSubmitted(true)
+    setStage('success')
   }
 
-  if (submitted) {
+  if (stage === 'decibel') {
+    return <JoinDecibel />
+  }
+
+  if (stage === 'success') {
     return (
       <div className="join success">
         <Mascot size={180} mood="cheer" />
         <h1 className="join-title">{CONFIG.copy.joinSuccess(name.trim())}</h1>
         <p className="join-sub">{CONFIG.copy.joinWelcome}</p>
+        <button type="button" onClick={() => setStage('decibel')}>
+          {CONFIG.copy.joinStartButton}
+        </button>
       </div>
     )
   }
