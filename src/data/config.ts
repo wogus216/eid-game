@@ -31,7 +31,6 @@ export const CONFIG = {
     joinWelcome: '로그인 완료! 이따 EID플랫폼에서 만나자',
     joinButton: '로그인',
     joinStartButton: '스타트',
-    joinDecibelTitle: '얼마나 커질까? 두근두근!',
     escHoldHint: '초기화하려면 Esc를 계속 누르세요…',
     entryCountLabel: (n: number) => `입장 ${n}명`,
     restartButton: '다시하기',

@@ -13,12 +13,15 @@ function JoinDecibel() {
   const [tense, setTense] = useState(false)
   if (!tense && db >= 68) setTense(true)
   if (tense && db <= 62) setTense(false)
+  const pct = Math.min(100, (db / 105) * 100)
 
   return (
     <div className="join join-decibel">
-      <h1 className="join-title">{CONFIG.copy.joinDecibelTitle}</h1>
+      <Mascot size={160} mood={tense ? 'tense' : 'idle'} />
       <div className="decibel-row">
-        <Mascot size={140} mood={tense ? 'tense' : 'idle'} />
+        <div className="decibel-bar">
+          <div className="decibel-bar-fill" style={{ height: `${pct}%` }} />
+        </div>
         <div className="decibel-readout">
           {Math.round(db)}
           <span className="decibel-unit">dB</span>
