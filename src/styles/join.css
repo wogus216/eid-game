@@ -1,25 +1,4 @@
 body { overflow: auto; user-select: auto; }
-/* base.css의 구름은 1920px 무대 화면 기준으로 두 뭉치(근경 + 원경)를 배치한다.
-   좁은 모바일 화면에서는 그대로 쓰면 뭉치가 한쪽에 몰려 보이므로, 참가
-   화면에서는 vw 단위로 화면 전체에 고르게 흩어지도록 다시 배치한다. */
-body::after {
-  top: 6vh;
-  left: 2vw;
-  width: 86px;
-  height: 28px;
-  box-shadow:
-    28px -14px 0 6px rgba(255, 255, 255, 0.9),
-    16vw 9vh 0 8px rgba(255, 255, 255, 0.85),
-    24vw 1vh 0 4px rgba(255, 255, 255, 0.8),
-    34vw -3vh 0 10px rgba(255, 255, 255, 0.82),
-    40vw 6vh 0 6px rgba(255, 255, 255, 0.78),
-    50vw 8vh 0 6px rgba(255, 255, 255, 0.85),
-    56vw -2vh 0 10px rgba(255, 255, 255, 0.8),
-    66vw -4vh 0 8px rgba(255, 255, 255, 0.82),
-    72vw 5vh 0 4px rgba(255, 255, 255, 0.75),
-    84vw 7vh 0 6px rgba(255, 255, 255, 0.8),
-    90vw -3vh 0 10px rgba(255, 255, 255, 0.72);
-}
 .join {
   min-height: 100vh;
   display: flex;
