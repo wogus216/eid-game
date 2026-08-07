@@ -1,6 +1,6 @@
 export const CONFIG = {
   maxEntry: 100,
-  defaultEntry: 100,
+  defaultEntry: 71,
   targetDb: 100,
   // 선물은 1차 3개 + 2차 3개. 돌림판은 3명을 뽑아 발표하고, 한 번 멈췄다 다음 3명을 뽑는다.
   prizeRounds: [

@@ -27,7 +27,7 @@ function advanceTo(scene: string): ShowState {
 describe('standby', () => {
   it('adjusts entryCount with clamping', () => {
     let s = reduce(initialState, { type: 'ADJUST_ENTRY', delta: -20 })
-    expect(s.entryCount).toBe(80)
+    expect(s.entryCount).toBe(CONFIG.defaultEntry - 20)
     s = reduce(s, { type: 'ADJUST_ENTRY', delta: +50 })
     expect(s.entryCount).toBe(CONFIG.maxEntry)
   })
